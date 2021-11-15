@@ -1,0 +1,21 @@
+
+<h5 mat-dialog-title>Geocercas</h5>
+<mat-dialog-content class="mat-typography">
+    <mat-form-field class="w-full"          
+                    floatLabel="never">
+        <mat-icon matSuffix>search</mat-icon>
+        <mat-label>Buscar</mat-label>
+        <input matInput type="search"
+                [(ngModel)]="searchText">
+    </mat-form-field>
+    <mat-list role="list">
+        <mat-list-item role="listitem" *ngFor="let geocerca of geocercas | filterGeocerca : searchText">
+            <mat-radio-button color="warn" (change)="radioChange(geocerca)">
+                {{ geocerca.nombre_geocerca }}
+            </mat-radio-button>
+        </mat-list-item>
+    </mat-list>
+</mat-dialog-content>
+<mat-dialog-actions>
+    
+</mat-dialog-actions>

@@ -1,0 +1,132 @@
+<h5 mat-dialog-title class="text-center">Mostrar Geocercas</h5>
+<div mat-dialog-content style="padding-left: 0px; padding-right: 0px;">
+    <mat-tab-group mat-stretch-tabs color="warn">
+
+        <mat-tab>
+            <ng-template mat-tab-label>
+                <mat-icon class="example-tab-icon">group_work</mat-icon>
+                Colecciones
+            </ng-template>
+            <mat-card>
+                <!--buscador de colecciones-->
+                <mat-form-field style="padding-left: 24px;padding-right: 24px"
+                                floatLabel="never">
+                <mat-icon matSuffix>search</mat-icon>
+                <input matInput (keyup)="applyFilterColeccion($event.target.value)" placeholder="Buscar colección">
+                </mat-form-field>
+                <!--/Buscador de colecciones-->
+                <div style="height: 300px;overflow: auto;margin-top: -18px;">
+                    <div class="example-container1" style="height: 100% !important;">
+                        <!--spinner-->
+                        <div class="example-loading-shade"
+                            *ngIf="isLoadingResultsColecciones"
+                            style="height: 100% !important;">
+                            <mat-spinner *ngIf="isLoadingResultsColecciones" color="warn"></mat-spinner>
+                        </div>
+                        <!--/spinner-->
+                        <!--contenido-->
+                        <div class="example-table-container">
+                            <table mat-table [dataSource]="dataSourceColecciones">
+                                <!-- Checkbox Column -->
+                                <ng-container matColumnDef="select">
+                                    <th mat-header-cell *matHeaderCellDef>
+                                        <mat-checkbox (change)="$event ? masterToggleColeccion() : null"
+                                                    [checked]="selectionColecciones.hasValue() && isAllSelectedColeccion()"
+                                                    [indeterminate]="selectionColecciones.hasValue() && !isAllSelectedColeccion()">
+                                        </mat-checkbox>
+                                    </th>
+                                    <td mat-cell *matCellDef="let row">
+                                        <mat-checkbox (click)="$event.stopPropagation()"
+                                                    (change)="$event ? selectionColecciones.toggle(row) : null; asignarEliminarColeccionAGeocerca($event, row)"
+                                                    [checked]="selectionColecciones.isSelected(row)">
+                                        </mat-checkbox>
+                                    </td>
+                                </ng-container>
+                                <!-- Checkbox Column -->
+                                <!-- Position Column nombre coleccion -->
+                                <ng-container matColumnDef="nombre">
+                                    <th mat-header-cell *matHeaderCellDef> Seleccionar todos </th>
+                                    <td mat-cell *matCellDef="let element"> {{ element.nombre }} </td>
+                                </ng-container>
+                                <!-- Position Column nombre coleccion -->
+        
+                                <tr mat-header-row
+                                    *matHeaderRowDef="displayedColumnsColecciones; sticky: true"></tr>
+                                <tr mat-row
+                                    *matRowDef="let row; columns: displayedColumnsColecciones;"
+                                    (click)="selectionColecciones.toggle(row)">
+                                </tr>
+                            </table>
+                            <mat-paginator [pageSizeOptions]="[4]" showFirstLastButtons #pagColecciones></mat-paginator>
+                        </div>
+                        <!--/contenido-->
+                    </div>
+                </div>
+            </mat-card>
+            <br>
+        </mat-tab>
+        <!--/Colecciones-->
+        <!--Geocercas-->
+        <mat-tab>
+            <ng-template mat-tab-label>
+                <mat-icon class="example-tab-icon">stars</mat-icon>
+                Geocercas
+            </ng-template>
+            <mat-card>
+                <!--buscador de colecciones-->
+                <mat-form-field style="padding-left: 24px;padding-right: 24px"
+                                floatLabel="never">
+                <mat-icon matSuffix>search</mat-icon>
+                <input matInput (keyup)="applyFilterGeocerca($event.target.value)" placeholder="Buscar geocerca">
+                </mat-form-field>
+                <!--/Buscador de colecciones-->
+                <div style="height: 300px;overflow: auto;margin-top: -18px;">
+                    <!--contenido-->
+                    <table mat-table [dataSource]="dataSourceGeocercas">
+                        <!-- Checkbox Column -->
+                        <ng-container matColumnDef="select">
+                            <th mat-header-cell *matHeaderCellDef>
+                                <mat-checkbox (change)="$event ? masterToggleGeocerca() : null"
+                                            [checked]="selectionGeocercas.hasValue() && isAllSelectedGeocerca()"
+                                            [indeterminate]="selectionGeocercas.hasValue() && !isAllSelectedGeocerca()">
+                                </mat-checkbox>
+                            </th>
+                            <td mat-cell *matCellDef="let row">
+                                <mat-checkbox (click)="$event.stopPropagation()"
+                                            (change)="$event ? selectionGeocercas.toggle(row) : null; asignarEliminarGeocerca($event, row)"
+                                            [checked]="selectionGeocercas.isSelected(row)">
+                                </mat-checkbox>
+                            </td>
+                        </ng-container>
+                        <!-- Checkbox Column -->
+                        <!-- Position Column nombre coleccion -->
+                        <ng-container matColumnDef="nombre_geocerca">
+                            <th mat-header-cell *matHeaderCellDef> Seleccionar todos </th>
+                            <td mat-cell *matCellDef="let element">  {{ element.nombre_grupo }} <span *ngIf="!element.nombre_grupo">Sin grupo</span> - {{ element.nombre_coleccion[0].nombre }} -  {{ element.nombre_geocerca }} </td>
+                        </ng-container>
+                        <!-- Position Column nombre coleccion -->
+
+                        <tr mat-header-row
+                            *matHeaderRowDef="displayedColumnsGeocercas; sticky: true"></tr>
+                        <tr mat-row
+                            *matRowDef="let row; columns: displayedColumnsGeocercas;"
+                            (click)="selectionGeocercas.toggle(row)">
+                        </tr>
+                    </table>
+                    <mat-paginator [pageSizeOptions]="[4]" showFirstLastButtons #pagGeocercas></mat-paginator>
+                    <!--/contenido-->
+                </div>
+            </mat-card>
+            <br>
+        </mat-tab>
+        <!--/Geocercas-->
+    </mat-tab-group>
+</div>
+<div mat-dialog-actions class="d-flex justify-content-end">
+    <button mat-button (click)="onDismiss()">Cancelar</button>
+    <button mat-raised-button 
+            color="warn"
+            (click)="verGeocercas()">
+        Ok
+    </button>
+</div>

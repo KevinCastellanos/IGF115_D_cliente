@@ -1,0 +1,51 @@
+<h6 mat-dialog-title class="text-center"> Editar Día de notificación </h6>
+<div mat-dialog-content>
+    <div class="row">
+        <div class="col-12">
+            <section class="example-section">
+                <mat-checkbox class="example-margin" [(ngModel)]="diaLunes">Lunes</mat-checkbox>
+            </section>
+        </div>
+        <div class="col-12">
+            <section class="example-section">
+                <mat-checkbox class="example-margin" [(ngModel)]="diaMartes">Martes</mat-checkbox>
+            </section>
+        </div>
+        <div class="col-12">
+            <section class="example-section">
+                <mat-checkbox class="example-margin" [(ngModel)]="diaMiercoles">Miercoles</mat-checkbox>
+            </section>
+        </div>
+        <div class="col-12">
+            <section class="example-section">
+                <mat-checkbox class="example-margin" [(ngModel)]="diaJueves">Jueves</mat-checkbox>
+            </section>
+        </div>
+        <div class="col-12">
+            <section class="example-section">
+                <mat-checkbox class="example-margin" [(ngModel)]="diaViernes">Viernes</mat-checkbox>
+            </section>
+        </div>
+        <div class="col-12">
+            <section class="example-section">
+                <mat-checkbox class="example-margin" [(ngModel)]="diaSabado">Sabado</mat-checkbox>
+            </section>
+        </div>
+        <div class="col-12">
+            <section class="example-section">
+                <mat-checkbox class="example-margin" [(ngModel)]="diaDomingo">Domingo</mat-checkbox>
+            </section>
+        </div>
+    </div>
+    <br>
+</div>
+<div mat-dialog-actions class="d-flex justify-content-end">
+    <button mat-button (click)="onDismiss()">Cancelar</button>
+    <button mat-raised-button color="warn" (click)="editarNotificacion()">
+        <mat-icon *ngIf="spinner === true">
+            <mat-spinner  color="accent" diameter="20">
+            </mat-spinner>
+        </mat-icon>
+        Actualizar
+    </button>
+</div>

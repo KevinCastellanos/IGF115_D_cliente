@@ -1,0 +1,61 @@
+<h6 mat-dialog-title class="text-center">Crear geocerca</h6>
+<div mat-dialog-content>
+    <mat-form-field>
+        <input  matInput 
+                placeholder="Nombre"
+                type="text"
+                name="nombre" 
+                [(ngModel)]="nombre"
+                id="nombre">
+    </mat-form-field>
+    <mat-form-field class="w-full">
+        <mat-label>Visibilidad</mat-label>
+        <mat-select [(value)]="asignarA" (selectionChange)="seleccionVisibilidad($event)">
+            <!--mat-option value="public"> Todos</!--mat-option>
+            <mat-option value="group"> Grupos</mat-option>-->
+            <mat-option value="collection"> Colecciones</mat-option>
+            <!--mat-option value="group-collecion"> Grupos + Colecciones</!--mat-option>-->
+            <mat-option value="private"> Solo para mí</mat-option>
+        </mat-select>
+    </mat-form-field>
+    <div *ngIf="viewGrupos === true">
+        <mat-form-field>
+            <mat-select [formControl]="bankMultiCtrl" placeholder="Grupos" [multiple]="true">
+                <ngx-mat-select-search [formControl]="bankMultiFilterCtrl"></ngx-mat-select-search>
+                <mat-option *ngFor="let bank of filteredBanksMulti | async" [value]="bank">
+                    {{bank.nombre_grupo}}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+        <div class="overflowTest">
+            <ul *ngFor="let bank of bankMultiCtrl?.value">
+                <li>{{bank.nombre_grupo}}</li>
+            </ul>
+        </div>
+    </div>
+    <div *ngIf="viewColectiones === true">
+        <mat-form-field>
+            <mat-select [formControl]="bankMultiCtrlColecciones" placeholder="Colecciones" [multiple]="true">
+                <ngx-mat-select-search [formControl]="bankMultiFilterCtrlColecciones"></ngx-mat-select-search>
+                <mat-option *ngFor="let bank of filteredBanksMultiColecciones | async" [value]="bank">
+                    {{bank.nombre}}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+        <div class="overflowTest">
+            <ul *ngFor="let bank of bankMultiCtrlColecciones?.value">
+                <li>{{bank.nombre}}</li>
+            </ul>
+        </div>
+    </div>
+</div>
+<div mat-dialog-actions class="d-flex justify-content-end">
+    <button mat-raised-button
+            color="warn"
+            [disabled] ="desabilitar"
+            (click)="registrarGeocercaPoligonal()">
+            <mat-icon>save</mat-icon>
+            Guardar
+    </button>
+</div>
+

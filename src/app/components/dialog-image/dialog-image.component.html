@@ -1,0 +1,29 @@
+<div mat-dialog-content style="padding-left: 0px;padding-right: 0px;margin-left: -22px !important;margin-right: -22px !important; margin-top: -22px !important;text-align: center;">
+    <img [src]="imagen" style="height: 380px;">
+    <div class="row" style="margin-left: 0px;margin-right: 0px; text-align: left !important;">
+        <div class="col" style="font-size: 13px;" *ngIf="data.title.ps00">
+            <span class="text-muted">ID:</span> <strong>{{ data.title.ps00 }}</strong>
+        </div>
+        <div class="col" style="font-size: 13px;" *ngIf="data.title.PS00">
+            <span class="text-muted">ID:</span> <strong>{{ data.title.PS00 }}</strong>
+        </div>
+        <div class="col" style="font-size: 13px;white-space:nowrap;overflow:hidden;text-overflow: ellipsis;width: 50px;">
+            dirección: <strong>{{ data.title.address }}</strong>
+        </div>
+    </div>
+    <div class="row" style="margin-left: 0px;margin-right: 0px; text-align:left !important">
+        <div class="col" style="font-size: 13px;">
+            Hora: <strong>{{ data.title.event_time | convertUtcToLocalTime }}</strong>
+        </div>
+        <div class="col" style="font-size: 13px;">
+            Posición: <strong>{{ data.title.lat }},{{ data.title.lng }}</strong>
+        </div>
+    </div>
+</div>
+<div mat-dialog-actions class="d-flex justify-content-end" style="margin-left: -24px;margin-right: -24px;padding-bottom: 0px;">
+    <button mat-button 
+    [mat-dialog-close]="data.body" 
+    cdkFocusInitial class="w-full"
+    color="warn"
+    style="margin-bottom: -7px !important;">Cerrar</button>
+</div>

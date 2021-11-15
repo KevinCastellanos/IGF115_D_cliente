@@ -1,0 +1,40 @@
+<h6 mat-dialog-title>Crear colección</h6>
+<div mat-dialog-content>
+    <mat-form-field>
+        <input  matInput 
+                placeholder="Nombre"
+                type="text" 
+                name="nombre" 
+                [(ngModel)]="nombre"
+                id="nombre">
+    </mat-form-field>
+    <!--<mat-form-field>
+        <input  matInput 
+                placeholder="Grupos"
+                type="text" 
+                name="grupos" 
+                [(ngModel)]="grupos"
+                id="grupos">
+    </mat-form-field>
+    <mat-form-field>
+        <mat-select [formControl]="bankMultiCtrl" placeholder="Geocercas" [multiple]="true">
+            <ngx-mat-select-search [formControl]="bankMultiFilterCtrl"></ngx-mat-select-search>
+            <mat-option *ngFor="let bank of filteredBanksMulti | async" [value]="bank">
+                {{bank.nombre}}
+            </mat-option>
+        </mat-select>
+    </mat-form-field>
+    <div class="overflowTest">
+        <ul *ngFor="let bank of bankMultiCtrl?.value">
+            <li>{{bank.nombre}}</li>
+        </ul>
+    </div>-->
+</div>
+<div mat-dialog-actions class="d-flex justify-content-end">
+    <button mat-raised-button
+            color="warn"
+            (click)="registrarColeccion()">
+            <mat-icon>save</mat-icon>
+            Guardar
+    </button>
+</div>

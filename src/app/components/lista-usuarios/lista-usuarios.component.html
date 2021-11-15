@@ -1,0 +1,11 @@
+<h5>Usuarios y equipos activos</h5>
+<hr>
+<ul class="list-group">
+    <li class="list-group-item" *ngFor="let usuario of usuariosActivosObs | async">
+        <input type="checkbox" (change)="changeStatus(usuario.id,$event)" [checked]=""> 
+        {{usuario.nombre}}
+        <span class="badge badge-primary"> {{usuario.sala}} </span>
+        <br>
+        <span class="badge badge-info"> {{usuario.id}} </span>
+    </li>
+</ul>

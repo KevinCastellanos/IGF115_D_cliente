@@ -1,0 +1,196 @@
+<mat-drawer-container class="example-container2" hasBackdrop="true">
+    <!--Menu lateral-->
+    <mat-drawer #drawer2 mode="over">
+        <!-- definimos el ancho del sidenav mode=OVER -->
+        <div class="W-300">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col p-0">
+                        <mat-toolbar-row>
+                            <h5>Módulos</h5>
+                            <span class="flex-right"></span>
+                            <button mat-icon-button
+                                    color="primary"
+                                    (click)="drawer2.toggle()">
+                                    <mat-icon>close</mat-icon>
+                            </button>
+                        </mat-toolbar-row>
+                        <mat-nav-list>
+                            <mat-divider></mat-divider>
+                            <a  mat-list-item 
+                                routerLink="/principal"> 
+                                <mat-icon mat-list-icon class="s-r-5">
+                                    home
+                                </mat-icon>
+                                Inicio
+                            </a>
+                            <mat-divider></mat-divider>
+                            <div *ngFor="let modulo of modulos">
+                                <a  *ngIf="modulo.id_modulo !== 16"
+                                    routerLinkActive="active-link"
+                                    mat-list-item [routerLink]="['/'+modulo.enrutador]"> 
+                                    <mat-icon mat-list-icon class="s-r-5">
+                                        {{ modulo.icono }}
+                                    </mat-icon>
+                                    {{ modulo.nombre | traductor }}
+                                    <mat-divider></mat-divider>
+                                </a>
+                                <a  *ngIf="modulo.id_modulo === 16"
+                                    routerLinkActive="active-link"
+                                    mat-list-item 
+                                    [href]="modulo.enrutador + 'user=' + localStorageService.usuario.usuario.usuario + '&pass=' + localStorageService.usuario.usuario.password"> 
+                                    <mat-icon mat-list-icon class="s-r-5">
+                                        {{ modulo.icono }}
+                                    </mat-icon>
+                                    {{ modulo.nombre | traductor }}
+                                    <mat-divider></mat-divider>
+                                </a>
+                            </div>
+                        </mat-nav-list>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- fin de definicion del ancho del sidenav mode=OVER -->
+    </mat-drawer>
+    <!--/Menu lateral-->
+    <!--CONTENIDO DE LA APP DE MAPA-->
+    <mat-drawer-content class="p-r-c">
+        <!--TOOLBAR-->
+        <mat-toolbar color="warn" class="fixed-top">
+                <mat-toolbar-row>
+                    <button mat-icon-button (click)="drawer2.toggle()">
+                            <mat-icon>menu</mat-icon>
+                    </button>
+                    <span style="margin-left: 5px">Configuraciones</span>
+                    <button mat-icon-button routerLink="/principal"
+                            matTooltip="Menu principal"> 
+                        <mat-icon mat-list-icon>
+                            home
+                        </mat-icon>
+                    </button>
+                    <span class="flex-right"></span>
+                    <sup *ngIf="localStorageService.usuario.usuario.root ===1" style="margin-right: 20px;">
+                        [{{ localStorageService.usuario.usuario.servidor }}]
+                    </sup>
+                    <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Example icon-button with a menu">
+                        <mat-icon>more_vert</mat-icon>
+                    </button>
+                    <mat-menu #menu="matMenu">
+                        <button mat-menu-item>
+                          <mat-icon>person</mat-icon>
+                          <span>{{ localStorageService.usuario.usuario.nombre }}  {{ localStorageService.usuario.usuario.apellido }}</span>
+                        </button>
+                        <button mat-menu-item disabled>
+                          <mat-icon>settings_applications</mat-icon>
+                          <span>Configuración</span>
+                        </button>
+                        <button mat-menu-item
+                                (click)="salir()">
+                          <mat-icon>exit_to_app</mat-icon>
+                          <span>Salir</span>
+                        </button>
+                    </mat-menu>
+                </mat-toolbar-row>
+        </mat-toolbar>
+        <!--tOOLBAR-->
+        <!--Container de sidenav y content de mapa-->
+        <mat-drawer-container class="example-container">
+            
+            <mat-tab-group color="warn">
+                <mat-tab label="Monitoreo">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col">
+                                <br>
+                                <mat-card>
+                                    <h6> Marcadores de vehículos en el mapa</h6>
+                                    <mat-slide-toggle color="warn" 
+                                                    (change)="cambiarEstadoTituloMarcador($event)"
+                                                    [checked]="localStorageService.monitoreo.tituloMarcador"> 
+                                                    <span class="text-muted"> 
+                                                        Al activar los nombres de los vehículos siempre seran visible en el mapa (Desactivado por defecto)
+                                                    </span>
+                                    </mat-slide-toggle>
+                                </mat-card>
+                                <br>
+                                <mat-card>
+                                    <h6> Agrupación de vehículos en el mapa</h6>
+                                    <mat-slide-toggle color="warn" 
+                                                    (change)="cambiarEstadoAgrupacionMarcador($event)"
+                                                    [checked]="localStorageService.monitoreo2.agrupacion">
+                                                    <span class="text-muted">
+                                                        Agrupación de vehículos en el mapa cuando haga zoom + o - (Activado por defecto)
+                                                    </span>
+                                    </mat-slide-toggle>
+                                </mat-card>
+                                <br>
+                                <mat-card>
+                                    <h6> No cerrar ventana de información al hacer zoom</h6>
+                                    <mat-slide-toggle color="warn" 
+                                                    (change)="cambiarEstadoPopupZoom($event)"
+                                                    [checked]="localStorageService.monitoreo3.popupZoom">
+                                                    <span class="text-muted">
+                                                        Se desactiva la agrupación para poder mantener el popup abierto en zoom (Desactivado por defecto)
+                                                    </span>
+                                    </mat-slide-toggle>
+                                </mat-card>
+                                <br>
+                            </div>
+                        </div>
+
+                    </div>
+                </mat-tab>
+                <mat-tab label="Viajes">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col">
+                                <br>
+                                <mat-card>
+                                    <h6> <mat-icon>fiber_manual_record</mat-icon> Formatos de viajes (vista)</h6>
+                                    <br>
+                                    <section>
+                                        <div class="group-one group" style="display: inline-block;margin-right: 5rem;margin-left: 25%;">
+                                          <input name="radio" type="radio" id="one" [checked]="vistaViajePredeterminado" (click)="configVistaViaje('pre')">
+                                            <label for="one" class="one"  style="text-align: center;">
+                                                <span style="position: absolute;top: 100%;left: 0;">Predererminado (2 lineas)</span>
+                                            </label>
+                                        </div>
+                                        <div class="group-two group" style="display: inline-block;margin-right: 1rem;">
+                                            <input name="radio" type="radio" id="two" [checked]="vistaViajeAumentada" (click)="configVistaViaje('aum')">
+                                            <label for="two" class="two" style="text-align: center !important;">
+                                                <span style="position: absolute;top: 100%;left: 0;">Ampliado (3 lineas)</span>
+                                            </label>
+                                        </div>
+                                    </section>                          
+                                </mat-card>
+                                <br>
+                                <mat-card>
+                                    <h6><mat-icon>fiber_manual_record</mat-icon> Armados de viajes</h6>
+                                    <ul>
+                                        <li>Por ignición</li>
+                                        <li>Por distancia</li>
+                                        <li>Por tiempo</li>
+                                    </ul>
+                                </mat-card>
+                                <br>
+                                <mat-card>
+                                    <h6><mat-icon>fiber_manual_record</mat-icon> Ver ignicion de encendido y apagado en viajes</h6>
+                                    <ul>
+                                        <li>Verdadero</li>
+                                        <li>Falso</li>
+                                        
+                                    </ul>
+                                </mat-card>
+                                <br>
+                            </div>
+                        </div>
+                    </div>
+                    
+                </mat-tab>
+            </mat-tab-group>
+        </mat-drawer-container>
+        <!--/Container de sidenav y content de mapa-->
+    </mat-drawer-content>
+    <!--CONTENIDO DE LA APP DE MAPA-->
+</mat-drawer-container>

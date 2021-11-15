@@ -1,0 +1,26 @@
+<nb-list>
+    <nb-list-item class="mouse-hover" 
+                  style="background:whitesmoke;border-bottom:1px solid #cccbcb; padding-top:0px; padding-bottom:0px;font-size:11px;">
+        <div class="d-flex justify-content-between">
+            <div> 
+                <strong>[{{ evento }}]</strong>
+            </div> 
+            <div>
+                <strong style="color:blue">{{ convertAmPm(converterUTCToLocalTime(hora)) }}</strong>
+            </div>
+            <div *ngIf="evento === '04' || evento === '44' || evento === '43'">
+                <a href="javascript:void(0)" (click)="verFoto()">
+                    <mat-icon>photo</mat-icon>
+                </a>
+            </div> 
+        </div>
+        <div class="d-flex justify-content-between">
+            <div class="truncar-direccion">
+                {{ direccion }} 
+            </div>
+            <div>
+                <strong>{{ convertirMiAKm(velocidad) }} km/h</strong>
+            </div> 
+        </div>
+    </nb-list-item>
+</nb-list>

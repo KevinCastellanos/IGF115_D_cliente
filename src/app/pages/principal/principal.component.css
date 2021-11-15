@@ -1,0 +1,38 @@
+.contenedor-menu {
+    width: 200px;
+    height: 150px;
+    /*background: cyan;*/
+    text-align: center;
+    margin-top: 30px;
+    margin-bottom: 20px;
+}
+
+.icon-menu {
+    width: 120px;
+    height: 120px;
+    background: blue;
+    margin: auto;
+    border-radius: 15% !important;
+}
+
+.icon-style {
+    font-size: 70px;
+    margin: 21%;
+    color: white;
+}
+
+.titulo-menu {
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    font-size: 14px;
+    line-height: 20px;
+    font-family: SegoeUI,Helvetica,Arial,sans-serif;
+    margin-top: 10px;
+    color: black !important;
+}
+
+.list-item--shadowed:hover {
+    box-shadow: 0 8px 16px 0 rgba(0,0,0,.1);
+    background-color: #fff;
+}

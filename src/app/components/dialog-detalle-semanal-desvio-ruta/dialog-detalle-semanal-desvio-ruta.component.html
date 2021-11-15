@@ -1,0 +1,24 @@
+<h5 mat-dialog-title>{{data.nombre}}</h5>
+<div mat-dialog-content>
+    <mat-list role="list">
+        <mat-list-item role="listitem" *ngFor="let elemento of desvios">
+            <div mat-line> 
+                Fecha y hora: {{ elemento.fecha | convertUtcToLocalTime }} 
+                <span class="float-right" *ngIf="elemento.dia === 0" style="color: red">Domingo</span>
+                <span class="float-right" *ngIf="elemento.dia === 1" style="color: red">Lunes</span>
+                <span class="float-right" *ngIf="elemento.dia === 2" style="color: red">Martes</span>
+                <span class="float-right" *ngIf="elemento.dia === 3" style="color: red">Miercoles</span>
+                <span class="float-right" *ngIf="elemento.dia === 4" style="color: red">Jueves</span>
+                <span class="float-right" *ngIf="elemento.dia === 5" style="color: red">Viernes</span>
+                <span class="float-right" *ngIf="elemento.dia === 6" style="color: red">Sabado</span>
+            </div>
+            <p mat-line style="color: orangered;">
+                georeferencia: {{ elemento.nombre }}
+            </p>
+            <mat-divider></mat-divider>
+        </mat-list-item>
+      </mat-list>
+</div>
+<div mat-dialog-actions class="d-flex justify-content-end">
+    <button mat-button [mat-dialog-close]="true" cdkFocusInitial>Cerrar</button>
+</div>

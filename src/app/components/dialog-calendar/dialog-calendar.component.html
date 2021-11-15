@@ -1,0 +1,85 @@
+<h6 mat-dialog-title style="margin-bottom: 0px;" class="text-center">{{data.title}}</h6>
+<div mat-dialog-content style="height: 450px;width: 430px;">        
+    <nb-calendar-range [(range)]="range"
+                        showHeader="false"
+                        size="medium">
+    </nb-calendar-range>
+    <div class="row">
+        <div class="col-8">
+            <mat-chip-list aria-label="Fish selection" style="font-size: 11px;">
+                {{ localStorageService.lenguaje.lan021 }} <mat-chip style="font-size: 10px;margin-right: 1%;">{{ range.start | date }}</mat-chip>
+                {{ localStorageService.lenguaje.lan022 }} <mat-chip style="font-size: 10px;">{{ range.end | date }}</mat-chip>
+            </mat-chip-list>
+        </div>
+        <div class="col-4">
+            <section>
+                <mat-checkbox 
+                    class="example-margin" 
+                    [checked]="conHoras"
+                    (change)="cambio($event.checked)">{{ localStorageService.lenguaje.lan307 }}</mat-checkbox>
+            </section>
+        </div>
+    </div>
+    <br>
+    <div class="row" *ngIf="conHoras === true">
+        <div class="col-4 d-flex align-items-center">
+            <div>
+                {{ localStorageService.lenguaje.lan308 }}: 
+            </div>
+        </div>
+        <div class="col-8">
+            <div class="">
+                <mat-form-field class="example-full-width">
+                    <input matInput 
+                            [placeholder]="localStorageService.lenguaje.lan308" 
+                            aria-label="Hora predeterminado"
+                            [ngxTimepicker]="defaultTime" 
+                            readonly
+                            name="hInicio" 
+                            [(ngModel)]="hInicio"
+                            id="hInicio">
+                </mat-form-field>
+                
+                <ngx-material-timepicker #defaultTime [defaultTime]="hInicio"></ngx-material-timepicker>
+            </div>
+        </div>
+    </div>
+    <div class="row" *ngIf="conHoras === true">
+        <div class="col-4 d-flex align-items-center">
+            <div>
+                {{ localStorageService.lenguaje.lan309 }}: 
+            </div>
+        </div>
+        <div class="col-8">
+            <div class="">
+                <mat-form-field class="example-full-width">
+                    <input matInput 
+                            [placeholder]="localStorageService.lenguaje.lan309" 
+                            aria-label="Hora predeterminado"
+                            [ngxTimepicker]="defaultTime2" 
+                            readonly
+                            name="hFinal" 
+                            [(ngModel)]="hFinal"
+                            id="hFinal">
+                </mat-form-field>
+                
+                <ngx-material-timepicker #defaultTime2 [defaultTime]="hFinal"></ngx-material-timepicker>
+            </div>
+        </div>
+    </div>
+    
+</div>
+<div mat-dialog-actions
+    class="d-flex justify-content-between">
+    <button mat-button 
+            (click)="onNoClick()">
+            {{ localStorageService.lenguaje.lan084 }}
+    </button>
+    <button mat-raised-button 
+            (click)="seleccionarFechaHora()" 
+            cdkFocusInitial
+            color="warn"
+            class="float-right">
+            {{ localStorageService.lenguaje.lan123 }}
+    </button>
+</div>

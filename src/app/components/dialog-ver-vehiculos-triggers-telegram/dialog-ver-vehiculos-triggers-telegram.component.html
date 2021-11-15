@@ -1,0 +1,53 @@
+<h5 mat-dialog-title class="text-center">Vehículos</h5>
+<div mat-dialog-content>
+    <table mat-table [dataSource]="dataSource">
+
+        <!--- Note that these columns can be defined in any order.
+              The actual rendered columns are set as a property on the row definition" -->
+      
+        <!-- etiqueta -->
+        <ng-container matColumnDef="nombre">
+          <th mat-header-cell *matHeaderCellDef> Etiqueta </th>
+          <td mat-cell *matCellDef="let element"> {{element.nombre}} </td>
+        </ng-container>
+        
+        <!-- etiqueta -->
+        <ng-container matColumnDef="id_disparador">
+          <th mat-header-cell *matHeaderCellDef> Acción </th>
+          <td mat-cell *matCellDef="let element"> 
+            <button *ngIf="false" mat-icon-button class="float-right" (click)="eliminarVehiculoTrigger(element)">
+              <mat-icon style="color:red">delete</mat-icon>
+            </button>
+          </td>
+        </ng-container>
+      
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+    <div class="row" *ngIf="false">
+      <div class="col">
+          <!--lista vehiculos-->
+          <mat-form-field>
+            <mat-select [formControl]="bankCtrlDispositivo" placeholder="Equipos" #singleSelectDispositivo>
+            <mat-option>
+                <ngx-mat-select-search [formControl]="bankFilterCtrlDispositivo"></ngx-mat-select-search>
+            </mat-option>
+              
+                <mat-option *ngFor="let dispositivo of filteredBanksDispositivo | async" [value]="dispositivo">
+                  {{ dispositivo.nombre }} - {{ dispositivo.imei }}
+                </mat-option>
+
+            
+            </mat-select>
+        </mat-form-field>
+        <!--/lista vehiculo-->
+      </div>
+      <div class="col d-flex align-items-center">
+        <button mat-raised-button color="warn" class="w-full" (click)="agregarVehiculoATrigger()">Agregar</button>
+      </div>
+    </div>
+</div>
+<div mat-dialog-actions class="d-flex justify-content-end">
+    <button mat-button mat-dialog-close="vacio" cdkFocusInitial>Cerrar</button>
+</div>
+

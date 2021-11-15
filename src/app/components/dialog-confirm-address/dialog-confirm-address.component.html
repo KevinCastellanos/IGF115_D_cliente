@@ -1,0 +1,14 @@
+<div mat-dialog-content>
+    <br>
+    <section class="example-section">
+        <mat-checkbox class="example-margin" [(ngModel)]="checked">¿Desea descargar los datos con direcciones?</mat-checkbox>
+    </section>
+</div>
+<div mat-dialog-actions class="d-flex justify-content-end">
+    <button mat-button (click)="onDismiss()">Cancelar</button>
+    <button mat-raised-button 
+            color="warn"
+            (click)="aceptar()">
+        Ok
+    </button>
+</div>

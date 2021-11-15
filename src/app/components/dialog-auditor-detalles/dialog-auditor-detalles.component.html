@@ -1,0 +1,52 @@
+<h6 mat-dialog-title>
+    <div class="row">
+        <div class="col">
+            Detalles
+        </div>
+        <div class="col float-right">
+            {{ data.nombre }}
+        </div>
+    </div>
+</h6>
+<div mat-dialog-content>
+    <mat-progress-bar mode="buffer" *ngIf="loader"></mat-progress-bar>
+    <!--Filtrar vehiculos-->
+    <mat-form-field class="w-full" 
+                    style="height:0px; margin-bottom: 60px !important;"
+                    floatLabel="never">
+    <mat-label>Buscar evento</mat-label>
+    <mat-icon matPrefix>search</mat-icon>
+        <input matInput type="search"
+        [(ngModel)]="searchText">
+        <button mat-button 
+                mat-icon-button 
+                matSuffix 
+                (click)="clearSearchField()" 
+                *ngIf="searchText">
+            <mat-icon>close</mat-icon>
+        </button>
+    </mat-form-field>
+    <!--/Filtrar vehiculos-->
+    <table class="table table-sm">
+        <thead>
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">Fecha</th>
+            <th scope="col">evento</th>
+            <th scope="col">Velocidad</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let ev of eventos | filterEventos : searchText; let i = index ">
+            <th scope="row">{{ i + 1 }}</th>
+            <td> {{ ev.event_time | convertUtcToLocalTime }}</td>
+            <td> {{ ev.evento }} </td>
+            <td> {{ ev.vel }} mi/h </td>
+          </tr>
+
+        </tbody>
+    </table>
+</div>
+<div mat-dialog-actions class="d-flex justify-content-end">
+    <button mat-button [mat-dialog-close]="data.body" cdkFocusInitial>Ok</button>
+</div>

@@ -1,0 +1,14 @@
+<h5 mat-dialog-title>Drivers in motion</h5>
+<div mat-dialog-content>
+    <mat-list role="list">
+        <mat-list-item role="listitem" *ngFor="let elemento of conductores">
+            <div mat-line> 
+                {{ elemento.nombre }} 
+            </div>
+            <mat-divider></mat-divider>
+        </mat-list-item>
+      </mat-list>
+</div>
+<div mat-dialog-actions class="d-flex justify-content-end">
+    <button mat-button [mat-dialog-close]="data.body" cdkFocusInitial>Ok</button>
+</div>

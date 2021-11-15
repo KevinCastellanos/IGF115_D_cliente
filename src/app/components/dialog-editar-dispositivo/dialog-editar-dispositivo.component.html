@@ -1,0 +1,78 @@
+<h5 mat-dialog-title>Editar vehículo</h5>
+<div mat-dialog-content>
+    <mat-form-field class="w-full">
+        <mat-label>Nombre vehículo</mat-label>
+        <input  matInput
+                type="text" 
+                name="nombre" 
+                [(ngModel)]="vehiculo.nombre"
+                id="nombre">
+    </mat-form-field>
+    <mat-form-field class="w-full">
+        <mat-label>Año</mat-label>
+        <input  matInput
+                type="text" 
+                name="anio" 
+                [(ngModel)]="vehiculo.year_vehicle"
+                id="anio">
+    </mat-form-field>
+    <mat-form-field class="w-full">
+        <mat-label>Marca</mat-label>
+        <input  matInput
+                type="text" 
+                name="marca" 
+                [(ngModel)]="vehiculo.marca"
+                id="marca">
+    </mat-form-field>
+    <mat-form-field class="w-full">
+        <mat-label>Modelo</mat-label>
+        <input  matInput
+                type="text" 
+                name="modelo" 
+                [(ngModel)]="vehiculo.modelo"
+                id="modelo">
+    </mat-form-field>
+    <mat-form-field class="w-full">
+        <mat-label>Placa</mat-label>
+        <input  matInput
+                type="text" 
+                name="modelo" 
+                [(ngModel)]="vehiculo.placa"
+                id="modelo">
+    </mat-form-field>
+    <mat-form-field class="w-full">
+        <mat-label>Color</mat-label>
+        <input  matInput
+                type="text" 
+                name="color" 
+                [(ngModel)]="vehiculo.color"
+                id="color">
+    </mat-form-field>
+    <mat-form-field class="w-full">
+        <mat-label>VIN</mat-label>
+        <input  matInput
+                type="text" 
+                name="vin" 
+                [(ngModel)]="vehiculo.vin"
+                id="vin">
+    </mat-form-field>
+    <mat-form-field class="w-full">
+        <mat-label>Descripción</mat-label>
+        <input  matInput
+                type="text" 
+                name="descripcion" 
+                [(ngModel)]="vehiculo.descripcion"
+                id="descripcion">
+    </mat-form-field>
+</div>
+<div mat-dialog-actions class="d-flex justify-content-end">
+    <button mat-button (click)="onDismiss()">Cancelar</button>
+    <button mat-raised-button color="warn" (click)="editarVehiculo()">
+        <mat-icon *ngIf="spinner">
+            <mat-spinner  color="accent" diameter="20">
+            </mat-spinner>
+        </mat-icon>
+        Actualizar
+    </button>
+</div>
+

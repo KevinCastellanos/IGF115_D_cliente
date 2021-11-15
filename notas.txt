@@ -1,0 +1,8 @@
+ // nueva trama que envia el equipo
+ '>RXATN','TI:254,ST:1,CS:0,GT:2087354608,CT:2087354608,LAT:1367402,LON:-8929885,TL:1$0$3285$3285$1100$0$11940,'ID=357042063195011<'
+
+// clave de push notification
+ {  
+    "publicKey":"BG0qfnRx8-42jJmExhY6e36_G0v6pE5RlcPGxRDvJutxHfNvq9OxUiEt66Fx8fnlTNwbDZKd7bxIo7jTioaAmA8",
+    "privateKey":"RjU3Ag3wZ7S9H3daAKqSl2YXhNlAgnWahzukh_64ADs"
+ }

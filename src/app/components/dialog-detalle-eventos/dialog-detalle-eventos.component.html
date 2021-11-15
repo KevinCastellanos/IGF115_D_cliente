@@ -1,0 +1,16 @@
+<div mat-dialog-content>
+    <mat-list role="list">
+        <mat-list-item role="listitem" *ngFor="let elemento of eventos">
+            <div mat-line> 
+               [ {{ elemento.evento }} ] ... [ {{ elemento.event_time | convertUtcToLocalTime }} ] ... [ {{ elemento.lat | number : '1.2-5' }},{{ elemento.lng | number : '1.2-5' }} ]
+            </div>
+            <p mat-line style="color: green;">
+                {{ elemento.direccion }}
+            </p>
+            <mat-divider></mat-divider>
+        </mat-list-item>
+      </mat-list>
+</div>
+<div mat-dialog-actions class="d-flex justify-content-end">
+    <button mat-button [mat-dialog-close]="true" cdkFocusInitial>Ok</button>
+</div>

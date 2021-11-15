@@ -1,0 +1,63 @@
+<div class="container-fluid h-full">
+    <div class="h-full row justify-content-center d-flex align-items-center">
+    
+            <div class="col-12 col-md-4">
+
+            </div>
+            <div class="col-12 col-md-4" style="margin-top: -20%;">
+                <img src="assets/logo_orange.png" alt="Logo apparel" width="60px" height="60px" class="img-center">
+                <h2 class="text-center" style="margin-top: 0px;color: #ff5722;" >Taxis S.A de C.V</h2>
+                <h6 class="text-center">Iniciar sesión</h6>
+                <mat-form-field class="w-full">
+                    <mat-label>Usuario o correo</mat-label>
+                    <input matInput 
+                            type="text"
+                            name="usuario" 
+                            [(ngModel)]="usuario"
+                            autofocus>
+                </mat-form-field>
+                <br>
+                <mat-form-field class="w-full">
+                    <mat-label>Contraseña</mat-label>
+                    <input matInput 
+                            [type]="hide ? 'password' : 'text'"
+                            name="password" 
+                            [(ngModel)]="pass"
+                            (keyup.enter)="ingresar()">
+                    <button mat-icon-button 
+                            matSuffix 
+                            (click)="hide = !hide" 
+                            [attr.aria-label]="'Hide password'" 
+                            [attr.aria-pressed]="hide">
+                        <mat-icon>{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
+                    </button>
+                </mat-form-field>
+                <br>
+                <button mat-raised-button 
+                        color="warn" 
+                        class="w-full"
+                        (click)="ingresar()">
+                        <span *ngIf="visible === 0"> Ingresar </span>
+                        <mat-icon *ngIf="visible === 1">
+                            <mat-spinner  color="accent" diameter="20">
+                            </mat-spinner>
+                        </mat-icon>
+                </button>
+                
+                <br>
+                <br>
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <a href="#">¿Olvidó su cuenta?</a>
+                    </div>
+                    <div>
+                        <a href="https://tkontrol.com" target="_blank">¿Quiénes somos?</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-md-4">
+
+            </div>
+    </div>
+</div>
+

@@ -1,0 +1,27 @@
+<h5 mat-dialog-title>
+    <div class="row">
+        <div class="col">
+            {{ data.ruta.nombre }}
+        </div>
+        <div class="col d-flex justify-content-end">
+            <button mat-raised-button color="warn" (click)="agregarGeocercaARuta()">Add</button>
+        </div>
+    </div>
+    
+</h5>
+<div mat-dialog-content>
+    <mat-list role="list">
+        <mat-list-item role="listitem" *ngFor="let elemento of geocercasRutas">
+            <div mat-line> 
+                {{ elemento.nombre_geocerca }} 
+            </div>
+            <button mat-icon-button color="warn" matTooltip="Remove georeference en route" (click)="eliminarGeocercaARuta(elemento)">
+                <mat-icon>delete</mat-icon>
+            </button>
+            <mat-divider></mat-divider>
+        </mat-list-item>
+      </mat-list>
+</div>
+<div mat-dialog-actions class="d-flex justify-content-end">
+    <button mat-button [mat-dialog-close]="data.body" cdkFocusInitial>Ok</button>
+</div>

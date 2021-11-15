@@ -1,0 +1,66 @@
+<h6 mat-dialog-title class="text-center">Editar usuario</h6>
+<div mat-dialog-content>
+    <mat-form-field class="w-full">
+        <mat-label>Nombre</mat-label>
+        <input  matInput
+                type="text" 
+                name="nombre" 
+                [(ngModel)]="data.nombre"
+                id="nombre">
+        
+    </mat-form-field>
+    <mat-form-field class="w-full">
+        <mat-label>Apellido</mat-label>
+        <input  matInput
+                type="text" 
+                name="apellido" 
+                [(ngModel)]="data.apellido"
+                id="apellido">
+    </mat-form-field>
+    <mat-form-field class="w-full">
+        <mat-label>Correo eléctronico</mat-label>
+        <input  matInput
+                type="text" 
+                name="email" 
+                [(ngModel)]="data.email"
+                id="email">
+    </mat-form-field>
+    <mat-form-field class="w-full">
+        <mat-label>Usuario</mat-label>
+        <input  matInput
+                type="text" 
+                name="usuario" 
+                [(ngModel)]="data.usuario"
+                id="usuario">
+    </mat-form-field>
+    <mat-form-field class="w-full">
+        <mat-label>Contraseña</mat-label>
+        <input  matInput
+                type="text" 
+                name="password" 
+                [(ngModel)]="data.password"
+                id="password">
+    </mat-form-field>
+    <mat-form-field class="w-full">
+        <mat-label>Grupos</mat-label>
+        <mat-select [(ngModel)]="data.id_grupo"
+                    (selectionChange)="changeGrupo($event.value)">
+          <mat-option *ngFor="let grupo of grupos" [value]="grupo.id_grupo" >
+            {{ grupo.nombre_grupo }}
+          </mat-option>
+        </mat-select>
+    </mat-form-field>   
+    <button mat-raised-button color="warn" (click)="dialogEditarTelefonos(data)">
+        Editar Telefonos
+    </button>       
+</div>
+<div mat-dialog-actions class="d-flex justify-content-end">
+    <button mat-button (click)="onDismiss()">Cancelar</button>
+    <button mat-raised-button color="warn" (click)="editarUsuario()">
+        <mat-icon *ngIf="spinner === true">
+            <mat-spinner  color="accent" diameter="20">
+            </mat-spinner>
+        </mat-icon>
+        Actualizar
+    </button>
+</div>

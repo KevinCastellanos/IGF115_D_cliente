@@ -1,0 +1,146 @@
+<mat-drawer-container class="example-container2" hasBackdrop="true">
+    <!--Menu lateral-->
+    <mat-drawer #drawer2 mode="over">
+        <!-- definimos el ancho del sidenav mode=OVER -->
+        <div class="W-300">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col p-0">
+                        <mat-toolbar-row>
+                            <h5>{{ localStorageService.lenguaje.lan075 }}</h5>
+                            <span class="flex-right"></span>
+                            <button mat-icon-button
+                                    color="primary"
+                                    (click)="drawer2.toggle()">
+                                    <mat-icon>close</mat-icon>
+                            </button>
+                        </mat-toolbar-row>
+                        <mat-nav-list>
+                            <mat-divider></mat-divider>
+                            <a  mat-list-item 
+                                routerLink="/principal"> 
+                                <mat-icon mat-list-icon class="s-r-5">
+                                    home
+                                </mat-icon>
+                                {{ localStorageService.lenguaje.lan078 }}
+                            </a>
+                            <mat-divider></mat-divider>
+                            <div *ngFor="let modulo of modulos">
+                                <a  *ngIf="modulo.id_modulo !== 16"
+                                    routerLinkActive="active-link"
+                                    mat-list-item [routerLink]="['/'+modulo.enrutador]"> 
+                                    <mat-icon mat-list-icon class="s-r-5">
+                                        {{ modulo.icono }}
+                                    </mat-icon>
+                                    {{ modulo.nombre | traductor }}
+                                    <mat-divider></mat-divider>
+                                </a>
+                                <a  *ngIf="modulo.id_modulo === 16"
+                                    routerLinkActive="active-link"
+                                    mat-list-item 
+                                    [href]="modulo.enrutador + 'user=' + localStorageService.usuario.usuario.usuario + '&pass=' + localStorageService.usuario.usuario.password"> 
+                                    <mat-icon mat-list-icon class="s-r-5">
+                                        {{ modulo.icono }}
+                                    </mat-icon>
+                                    {{ modulo.nombre | traductor }}
+                                    <mat-divider></mat-divider>
+                                </a>
+                            </div>
+                            
+                        </mat-nav-list>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- fin de definicion del ancho del sidenav mode=OVER -->
+    </mat-drawer>
+    <!--/Menu lateral-->
+    <!--CONTENIDO DE LA APP DE MAPA-->
+    <mat-drawer-content class="p-r-c">
+        <!--TOOLBAR-->
+        <mat-toolbar color="warn" class="fixed-top">
+                <mat-toolbar-row>
+                    <button mat-icon-button (click)="drawer2.toggle()">
+                            <mat-icon>menu</mat-icon>
+                    </button>
+                    <span style="margin-left: 5px"> Módulos </span>
+                    <span class="flex-right"></span>
+                    <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Example icon-button with a menu">
+                        <mat-icon>more_vert</mat-icon>
+                    </button>
+                    <mat-menu #menu="matMenu" xPosition="before">
+                        <button mat-menu-item>
+                          <mat-icon>person</mat-icon>
+                          <span>{{ localStorageService.usuario.usuario.nombre }} {{ localStorageService.usuario.usuario.apellido }} </span>
+                        </button>
+                        <button mat-menu-item
+                                (click)="salir()">
+                          <mat-icon>exit_to_app</mat-icon>
+                          <span>{{ localStorageService.lenguaje.lan081 }}</span>
+                        </button>
+                    </mat-menu>
+                    <mat-menu #idioma="matMenu">
+                        <button mat-menu-item (click)="cambiarIdioma('es')">{{ localStorageService.lenguaje.lan289 }}</button>
+                        <button mat-menu-item (click)="cambiarIdioma('en')">{{ localStorageService.lenguaje.lan290 }}</button>
+                    </mat-menu>
+                </mat-toolbar-row>
+        </mat-toolbar>
+        <!--tOOLBAR-->
+        <!--Container de sidenav y content de mapa-->
+        <mat-drawer-container class="example-container" style="background: #faf9f8;">
+            <div class="container" style="overflow-x: hidden !important;" *ngIf="loading === false">
+                <br><br>
+                <!--modulos asignados-->
+                <div class="row clearfix">
+                    <div class="col-6 col-md-3 d-flex justify-content-center mb-3 lift" *ngFor="let modulo of modulos">
+                        <a *ngIf="modulo.tipo_modulo === 0" [routerLink]="['/'+modulo.enrutador]" style="text-decoration: none">
+                            <div class="contenedor-menu">
+                            <div class="icon-menu" [ngStyle]="{'background': modulo.color_fondo }">
+                                <span class="material-icons icon-style" [ngStyle]="{'color': modulo.color_icono }">
+                                    {{ modulo.icono }}
+                                </span>
+                            </div>
+                            <div class="titulo-menu">{{ modulo.nombre | traductor }}</div>
+                            </div>
+                        </a>
+                        <a *ngIf="modulo.id_modulo === 16" (click)="loginOps(modulo.enrutador)" style="text-decoration: none">
+                            <div class="contenedor-menu">
+                            <div class="icon-menu" [ngStyle]="{'background': modulo.color_fondo }">
+                                <span class="material-icons icon-style" [ngStyle]="{'color': modulo.color_icono }">
+                                    {{ modulo.icono }}
+                                </span>
+                            </div>
+                            <div class="titulo-menu">{{ modulo.nombre | traductor }}</div>
+                            </div>
+                        </a>
+                        <a *ngIf="modulo.tipo_modulo === 1 && modulo.id_modulo !== 16" [href]="modulo.enrutador" style="text-decoration: none">
+                            <div class="contenedor-menu">
+                            <div class="icon-menu" [ngStyle]="{'background': modulo.color_fondo }">
+                                <span class="material-icons icon-style" [ngStyle]="{'color': modulo.color_icono }">
+                                    {{ modulo.icono }}
+                                </span>
+                            </div>
+                            <div class="titulo-menu">{{ modulo.nombre }}</div>
+                            </div>
+                        </a>    
+                    </div>
+                </div>
+                <!--modulos asignados-->
+            </div>
+            <div class="container-fluid h-full" *ngIf="loading">
+                <div class="row h-full">
+                    <div class="col d-flex justify-content-center align-items-center">
+                        <!--mat-spinner mode="indeterminate" color="warn"></mat-spinner-->
+                        <div class="spinner">
+                            <div class="inner one"></div>
+                            <div class="inner two"></div>
+                            <div class="inner three"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </mat-drawer-container>
+        <!--/Container de sidenav y content de mapa-->
+    </mat-drawer-content>
+    <!--CONTENIDO DE LA APP DE MAPA-->
+</mat-drawer-container>

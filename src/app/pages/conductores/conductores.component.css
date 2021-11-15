@@ -1,0 +1,68 @@
+
+
+.flippable-card {
+    width: 100%;
+    position: absolute;
+    transform-style: preserve-3d;
+    transition: transform 0.5s;
+
+}
+
+
+
+.flippable-card mat-card {
+
+    display: block;
+
+    position: absolute;
+
+    width: 100%;
+
+    backface-visibility: hidden;
+
+    transform-style: preserve-3d !important;
+
+}
+
+.flippable-card > mat-card > mat-card-content > div {
+
+    display: block !important;
+    backface-visibility: hidden !important;
+    transform-style: preserve-3d !important;
+    width: 100%;
+}
+
+.flippable-from {
+
+    display: block !important;
+    backface-visibility: hidden !important;
+    transform-style: preserve-3d !important;
+}
+
+
+
+.flippable-card .back {
+
+    background: #f0f0f0;
+
+    transform: rotateY( 180deg );
+
+    perspective: 1200px;
+    transform-style: preserve-3d !important;
+
+}
+
+
+
+.flippable-card.flipped {
+
+    transform: rotateY( 180deg );
+    perspective: 1200px;
+    transform-style: preserve-3d !important;
+}
+
+
+.example-header-image {
+    background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcTY9V-G9Q8BfsD94apduiSsREh8Cwdjvt4stt2pAkbjiv-3F3Ay&usqp=CAU');
+    background-size: cover;
+}

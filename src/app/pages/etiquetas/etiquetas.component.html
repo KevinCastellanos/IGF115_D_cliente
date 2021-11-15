@@ -1,0 +1,254 @@
+<!---->
+<mat-drawer-container class="example-container2" hasBackdrop="true">
+    <!--Menu lateral-->
+    <mat-drawer #drawer2 mode="over">
+        <!-- definimos el ancho del sidenav mode=OVER -->
+        <div class="W-300">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col p-0">
+                        <mat-toolbar-row>
+                            <h5>Módulos</h5>
+                            <span class="flex-right"></span>
+                            <button mat-icon-button
+                                    color="primary"
+                                    (click)="drawer2.toggle()">
+                                    <mat-icon>close</mat-icon>
+                            </button>
+                        </mat-toolbar-row>
+                        <mat-nav-list>
+                            <mat-divider></mat-divider>
+                            <a  mat-list-item 
+                                routerLink="/principal"> 
+                                <mat-icon mat-list-icon class="s-r-5">
+                                    home
+                                </mat-icon>
+                                Inicio
+                            </a>
+                            <mat-divider></mat-divider>
+                            <div *ngFor="let modulo of modulos">
+                                <a  *ngIf="modulo.id_modulo !== 16"
+                                    routerLinkActive="active-link"
+                                    mat-list-item [routerLink]="['/'+modulo.enrutador]"> 
+                                    <mat-icon mat-list-icon class="s-r-5">
+                                        {{ modulo.icono }}
+                                    </mat-icon>
+                                    {{ modulo.nombre | traductor }}
+                                    <mat-divider></mat-divider>
+                                </a>
+                                <a  *ngIf="modulo.id_modulo === 16"
+                                    routerLinkActive="active-link"
+                                    mat-list-item 
+                                    [href]="modulo.enrutador + 'user=' + localStorageService.usuario.usuario.usuario + '&pass=' + localStorageService.usuario.usuario.password"> 
+                                    <mat-icon mat-list-icon class="s-r-5">
+                                        {{ modulo.icono }}
+                                    </mat-icon>
+                                    {{ modulo.nombre | traductor }}
+                                    <mat-divider></mat-divider>
+                                </a>
+                            </div>
+                        </mat-nav-list>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- fin de definicion del ancho del sidenav mode=OVER -->
+    </mat-drawer>
+    <!--/Menu lateral-->
+    <!--CONTENIDO DE LA APP DE MAPA-->
+    <mat-drawer-content class="p-r-c">
+        <!--TOOLBAR-->
+        <mat-toolbar color="warn" class="fixed-top">
+                <mat-toolbar-row>
+                    <button mat-icon-button (click)="drawer2.toggle()">
+                            <mat-icon>menu</mat-icon>
+                    </button>
+                    <span style="margin-left: 5px">Etiquetas</span>
+                    <button mat-icon-button routerLink="/principal"
+                            matTooltip="Menu principal"> 
+                        <mat-icon mat-list-icon>
+                            home
+                        </mat-icon>
+                    </button>
+                    <span class="flex-right"></span>
+                    <sup *ngIf="localStorageService.usuario.usuario.root ===1" style="margin-right: 20px;">
+                        [{{ localStorageService.usuario.usuario.servidor }}]
+                    </sup>
+                    <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Example icon-button with a menu">
+                        <mat-icon>more_vert</mat-icon>
+                    </button>
+                    <mat-menu #menu="matMenu">
+                        <button mat-menu-item>
+                          <mat-icon>person</mat-icon>
+                          <span>{{ localStorageService.usuario.usuario.nombre }} {{ localStorageService.usuario.usuario.apellido }}</span>
+                        </button>
+                        <button mat-menu-item disabled>
+                          <mat-icon>settings_applications</mat-icon>
+                          <span>Configuración</span>
+                        </button>
+                        <button mat-menu-item
+                                (click)="salir()">
+                          <mat-icon>exit_to_app</mat-icon>
+                          <span>Salir</span>
+                        </button>
+                    </mat-menu>
+                </mat-toolbar-row>
+        </mat-toolbar>
+        <!--tOOLBAR-->
+        <!--Container de sidenav y content-->
+        <mat-drawer-container class="example-container">
+            <div class="container">
+                <div class="row">
+                    <!--Tabla etiquetas-->
+                    <div class="col-8">
+                        <br>
+                        <!--buscador de dispositivo-->
+                        <mat-form-field>
+                            <mat-icon matSuffix>search</mat-icon>
+                            <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Filtrar">
+                        </mat-form-field>
+                        <!--Buscador de dispositivo-->
+                        <!--Tabla-->
+                        <div class="example-container1 mat-elevation-z8">
+                            <!--<div class="example-loading-shade"
+                                *ngIf="isLoadingResults">
+                                <mat-spinner *ngIf="isLoadingResults"></mat-spinner>
+                            </div>-->
+                            <div class="example-table-container">
+                                <table mat-table [dataSource]="dataSource">
+                        
+                                        <!-- imei Column -->
+                                        <ng-container matColumnDef="etiqueta">
+                                            <th mat-header-cell *matHeaderCellDef> Etiqueta</th>
+                                            <td mat-cell *matCellDef="let element"> {{element.etiqueta}} </td>
+                                        </ng-container>
+                                        
+                                        <!-- modelo Column -->
+                                        <ng-container matColumnDef="nombre">
+                                            <th mat-header-cell *matHeaderCellDef> Nombre </th>
+                                            <td mat-cell *matCellDef="let element"> {{element.nombre}} </td>
+                                        </ng-container>
+                                        
+                                        <!-- fw Column -->
+                                        <ng-container matColumnDef="descripcion">
+                                            <th mat-header-cell *matHeaderCellDef> Descripción </th>
+                                            <td mat-cell *matCellDef="let element"> {{element.descripcion}} </td>
+                                        </ng-container>
+
+                                        <!-- fw Column -->
+                                        <ng-container matColumnDef="descripcion_icono">
+                                            <th mat-header-cell *matHeaderCellDef> Bandera </th>
+                                            <td mat-cell *matCellDef="let element"> 
+                                                <mat-icon [ngStyle]="{'color': element.color_icono }">
+                                                    {{ element.descripcion_icono }}
+                                                </mat-icon>
+                                            </td>
+                                        </ng-container>
+
+                                        <!-- modelo Column -->
+                                        <ng-container matColumnDef="id_etiqueta">
+                                            <th mat-header-cell *matHeaderCellDef> Gestión </th>
+                                            <td mat-cell *matCellDef="let element"> 
+                                                <a href="javascript: void(0)" (click)="dialogEditarEtiqueta(element)">Editar</a> | 
+                                                <a href="javascript: void(0)" (click)="dialogEliminarEtiqueta(element.id_etiqueta)" style="color:red">Eliminar</a> 
+                                            </td>
+                                        </ng-container>
+
+                                        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                                        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+                                </table>
+                                <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
+                            </div>
+                        </div>
+                        <!--/Tabla-->
+                    </div>
+                    <!--/tabla etiquetas-->
+                    <!--Etiquetas-->
+                    <div class="col-4">
+                        <br>
+
+                        <div>
+                            <h5>Registrar etiqueta</h5>
+                            <!--Formulario de etiqueta-->
+                            <mat-form-field class="w-full">
+                                <mat-label>Etiqueta (Código)</mat-label>
+                                <input  matInput
+                                        type="text" 
+                                        name="et" 
+                                        [(ngModel)]="etiqueta"
+                                        id="et">
+                            </mat-form-field>
+                            <mat-form-field class="w-full">
+                                <mat-label>Nombre</mat-label>
+                                <input  matInput
+                                        type="text" 
+                                        name="nomb" 
+                                        [(ngModel)]="nombre"
+                                        id="nomb">
+                            </mat-form-field>
+                            <mat-form-field class="w-full">
+                                <mat-label>Descripción</mat-label>
+                                <input  matInput
+                                        type="text" 
+                                        name="desc" 
+                                        [(ngModel)]="descripcion"
+                                        id="desc">
+                            </mat-form-field>
+                            <!--bandera select-->
+                            <mat-form-field>
+                                <mat-select placeholder="Seleccionar bandera" 
+                                            [formControl]="iconosSelect">
+                                    <mat-select-trigger>
+                                        <mat-icon  *ngIf="iconosSelect.value">{{ this.iconosSelect.value.icono }}</mat-icon> <span *ngIf="iconosSelect.value"> {{ this.iconosSelect.value.nombre }} </span> 
+                                    </mat-select-trigger>
+                                    <mat-option *ngFor="let b of listaBanderas" [value]="b" >
+                                        <mat-icon matSuffix>{{ b.icono }}</mat-icon>
+                                        {{ b.nombre }}
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                            <!--/bandera select-->
+                            <!--Select colores-->
+                            <mat-form-field>
+                                <mat-select placeholder="Seleccionar color de bandera" 
+                                            [formControl]="bankCtrl"
+                                            #singleSelect>
+                                    <mat-select-trigger>
+                                        <mat-icon  *ngIf="bankCtrl.value" [ngStyle]="{'color': bankCtrl.value.color }">{{ this.bankCtrl.value.icono }}</mat-icon> <span *ngIf="bankCtrl.value"> {{ this.bankCtrl.value.nombre }} </span> 
+                                    </mat-select-trigger>
+                                    <mat-option *ngFor="let b of filteredBanks | async" [value]="b">
+                                        <mat-icon matSuffix [ngStyle]="{'color': b.color }">{{ b.icono }}</mat-icon>
+                                        {{ b.nombre }}
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                            <!--/select colores-->
+                            <mat-slide-toggle [checked]="false" 
+                                            color="warn"
+                                            (change)="toggle($event)"
+                                            matTooltip="Si selecciona true, indica que esta etiqueta reconocerá eventos que contengan, fotos">
+                                Fotografía
+                            </mat-slide-toggle>
+                            <br>
+                            <br>
+                            <button mat-raised-button 
+                                    color="warn"
+                                    (click)="registrarEtiqueta()"
+                                    class="w-full">
+                                    <mat-icon>
+                                        <mat-spinner *ngIf="visible === 1" color="warn" diameter="20">
+                                        </mat-spinner>
+                                    </mat-icon>
+                                    Registrar
+                            </button>
+                        </div>
+                        
+                    </div>
+                    <!--/Etiquetas-->
+                </div>
+            </div>
+        </mat-drawer-container>
+        <!--/Container de sidenav y content-->
+    </mat-drawer-content>
+    <!--CONTENIDO DE LA APP DE MAPA-->
+</mat-drawer-container>

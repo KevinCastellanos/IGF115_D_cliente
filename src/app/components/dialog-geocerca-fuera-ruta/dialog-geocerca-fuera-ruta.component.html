@@ -1,0 +1,16 @@
+<div mat-dialog-content>
+    <mat-list role="list">
+        <mat-list-item role="listitem" *ngFor="let elemento of geocercasFueraRuta">
+            <div mat-line style="color: green;"> 
+                {{ elemento.nombre_geocerca }} 
+            </div>
+            <p mat-line style="color: green;">
+                date: {{ elemento.event_time | convertUtcToLocalTime }}
+            </p>
+            <mat-divider></mat-divider>
+        </mat-list-item>
+      </mat-list>
+</div>
+<div mat-dialog-actions class="d-flex justify-content-end">
+    <button mat-button [mat-dialog-close]="true" cdkFocusInitial>Ok</button>
+</div>

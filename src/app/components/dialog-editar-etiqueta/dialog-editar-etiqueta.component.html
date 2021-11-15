@@ -1,0 +1,67 @@
+<h5 mat-dialog-title>Editar</h5>
+<div mat-dialog-content>
+    <mat-form-field class="w-full">
+        <mat-label>Etiqueta (Código)</mat-label>
+        <input  matInput
+                type="text" 
+                name="et" 
+                [(ngModel)]="eetiqueta"
+                id="et">
+    </mat-form-field>
+    <mat-form-field class="w-full">
+        <mat-label>Nombre</mat-label>
+        <input  matInput
+                type="text" 
+                name="nomb" 
+                [(ngModel)]="enombre"
+                id="nomb">
+    </mat-form-field>
+    <mat-form-field class="w-full">
+        <mat-label>Descripción</mat-label>
+        <input  matInput
+                type="text" 
+                name="desc" 
+                [(ngModel)]="edescripcion"
+                id="desc">
+    </mat-form-field>
+    <mat-form-field>
+    <mat-select placeholder="Seleccionar bandera" 
+                [formControl]="bankCtrl"
+                #singleSelect
+                (selectionChange)="limpiarIcono(bankCtrl)">
+            <mat-select-trigger>
+                <mat-icon  *ngIf="bankCtrl.value">{{ this.bankCtrl.value.icono }}</mat-icon> <span *ngIf="bankCtrl.value"> {{ this.bankCtrl.value.nombre }} </span> 
+            </mat-select-trigger>
+            <mat-option *ngFor="let b of filteredBanks | async" [value]="b">
+                <mat-icon matSuffix>{{ b.icono }}</mat-icon>
+                {{ b.nombre }}
+            </mat-option>
+        </mat-select>
+    </mat-form-field>
+    <!--Select colores-->
+    <mat-form-field>
+        <mat-select placeholder="Seleccionar color de bandera" 
+                    [formControl]="bankCtrl2"
+                    #singleSelect2>
+            <mat-select-trigger>
+                <mat-icon  *ngIf="bankCtrl2.value" [ngStyle]="{'color': bankCtrl2.value.color }">{{ this.bankCtrl2.value.icono }}</mat-icon> 
+                <span *ngIf="bankCtrl2.value"> {{ this.bankCtrl2.value.nombre }} </span> 
+            </mat-select-trigger>
+            <mat-option *ngFor="let b2 of filteredBanks2 | async" [value]="b2">
+                <mat-icon matSuffix [ngStyle]="{'color': b2.color }">{{ b2.icono }}</mat-icon>
+                {{ b2.nombre }}
+            </mat-option>
+        </mat-select>
+    </mat-form-field>
+    <!--/select colores-->
+</div>
+<div mat-dialog-actions class="d-flex justify-content-end">
+    <button mat-button (click)="onDismiss()">Cancelar</button>
+    <button mat-raised-button color="primary" (click)="editarEtiqueta()">
+        <mat-icon *ngIf="evisible === 1">
+            <mat-spinner  color="warn" diameter="20">
+            </mat-spinner>
+        </mat-icon>
+        Actualizar
+    </button>
+</div>

@@ -1,0 +1,1016 @@
+<mat-drawer-container class="example-container2" hasBackdrop="true">
+        <!--Menu lateral-->
+        <mat-drawer #drawer2 mode="over">
+            <!-- definimos el ancho del sidenav mode=OVER -->
+            <div class="W-300">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col p-0">
+                            <mat-toolbar-row>
+                                <h5>Módulos</h5>
+                                <span class="flex-right"></span>
+                                <button mat-icon-button
+                                        color="warn"
+                                        (click)="drawer2.toggle()">
+                                        <mat-icon>close</mat-icon>
+                                </button>
+                            </mat-toolbar-row>
+                            <mat-nav-list>
+                                <mat-divider></mat-divider>
+                                <a  mat-list-item 
+                                    routerLink="/principal"> 
+                                    <mat-icon mat-list-icon class="s-r-5">
+                                        home
+                                    </mat-icon>
+                                    Inicio
+                                </a>
+                                <mat-divider></mat-divider>
+                                <div *ngFor="let modulo of modulos">
+                                    <a  *ngIf="modulo.id_modulo !== 16"
+                                        routerLinkActive="active-link"
+                                        mat-list-item [routerLink]="['/'+modulo.enrutador]"> 
+                                        <mat-icon mat-list-icon class="s-r-5">
+                                            {{ modulo.icono }}
+                                        </mat-icon>
+                                        {{ modulo.nombre | traductor }}
+                                        <mat-divider></mat-divider>
+                                    </a>
+                                    <a  *ngIf="modulo.id_modulo === 16"
+                                        routerLinkActive="active-link"
+                                        mat-list-item 
+                                        [href]="modulo.enrutador + 'user=' + localStorageService.usuario.usuario.usuario + '&pass=' + localStorageService.usuario.usuario.password"> 
+                                        <mat-icon mat-list-icon class="s-r-5">
+                                            {{ modulo.icono }}
+                                        </mat-icon>
+                                        {{ modulo.nombre | traductor }}
+                                        <mat-divider></mat-divider>
+                                    </a>
+                                </div>
+                            </mat-nav-list>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- fin de definicion del ancho del sidenav mode=OVER -->
+        </mat-drawer>
+        <!--/Menu lateral-->
+        <!--CONTENIDO DE LA APP -->
+        <mat-drawer-content class="p-r-c">
+            <!--TOOLBAR-->
+            <mat-toolbar color="warn" class="fixed-top">
+                    <mat-toolbar-row>
+                        <button mat-icon-button (click)="drawer2.toggle()">
+                                <mat-icon>menu</mat-icon>
+                        </button>
+                        <span style="margin-left: 5px">Administración de vehículos</span>
+                        <button mat-icon-button routerLink="/principal"
+                                matTooltip="Menu principal"> 
+                            <mat-icon mat-list-icon>
+                                home
+                            </mat-icon>
+                        </button>
+                        <span class="flex-right"></span>
+                        <sup *ngIf="localStorageService.usuario.usuario.root ===1" style="margin-right: 20px;">
+                            [{{ localStorageService.usuario.usuario.servidor }}]
+                        </sup>
+                        <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Example icon-button with a menu">
+                            <mat-icon>more_vert</mat-icon>
+                        </button>
+                        <mat-menu #menu="matMenu">
+                            <button mat-menu-item>
+                              <mat-icon>person</mat-icon>
+                              <span>{{ localStorageService.usuario.usuario.nombre }} {{ localStorageService.usuario.usuario.apellido }}</span>
+                            </button>
+                            <button mat-menu-item disabled>
+                              <mat-icon>settings_applications</mat-icon>
+                              <span>Configuración</span>
+                            </button>
+                            <button mat-menu-item
+                                    (click)="salir()">
+                              <mat-icon>exit_to_app</mat-icon>
+                              <span>Salir</span>
+                            </button>
+                        </mat-menu>
+                    </mat-toolbar-row>
+            </mat-toolbar>
+            <!--tOOLBAR-->
+            <!--Container de sidenav y content de mapa-->
+            <mat-drawer-container>
+                <!--tabs-->
+                <mat-tab-group mat-stretch-tabs color="warn">
+                    <!--Tab gestion de dispositivos-->
+                    <mat-tab color="warn">
+                        <ng-template mat-tab-label>
+                            <mat-icon class="example-tab-icon">sd_storage_rounded</mat-icon>
+                            Dispositivos 
+                        </ng-template>
+                        <!--gestion de dispositivos-->
+                        <mat-card>
+                            <div class="row" [hidden]="boolAgregarDispositivo === true">
+                                <button mat-fab 
+                                    color="warn" 
+                                    style="position: absolute; right: 15px;top: 15px;" 
+                                    matTooltip="agregar nuevo dispositivo"
+                                    (click)="mostrarOcultarFormularioRegistroDispositivo(true)">
+                                <mat-icon>add</mat-icon>
+                            </button>
+                                <div class="col-12" >
+                                    <div class="row">
+                                        <div class="col">
+                                            <!--buscador de dispositivo-->
+                                            <mat-form-field style="width: 75%;">
+                                                <mat-icon matSuffix>search</mat-icon>
+                                                <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Filtrar">
+                                            </mat-form-field>
+                                            <!--Buscador de dispositivo-->
+                                            
+                                        </div>
+                                    </div>
+                                    
+                                    <!--Tabla-->
+                                    <div class=" mat-elevation-z8">
+                                        <div class="example-loading-shade"
+                                            *ngIf="isLoadingResults">
+                                            <mat-spinner *ngIf="isLoadingResults"></mat-spinner>
+                                        </div>
+                                        <div class="">
+                                            <mat-progress-bar mode="indeterminate" color="warn" *ngIf="spinner1"></mat-progress-bar>
+                                            <table mat-table [dataSource]="dataSource">
+                                    
+                                                    <!-- imei Column -->
+                                                    <ng-container matColumnDef="imei">
+                                                        <th mat-header-cell *matHeaderCellDef > Dispositivos</th>
+                                                        <td mat-cell *matCellDef="let element"> {{element.imei}} </td>
+                                                    </ng-container>
+                                                    
+                                                    
+                                                    <!-- fw Column -->
+                                                    <ng-container matColumnDef="fw">
+                                                        <th mat-header-cell *matHeaderCellDef> Config Scrtipt </th>
+                                                        <td mat-cell *matCellDef="let element"> 
+
+                                                            <button mat-icon-button aria-label="Example icon-button with a heart icon">
+                                                                <mat-icon   color="warn"
+                                                                            (click)="dialogComandosConfiguracion2(element.cod_configuracion_eq, element.nombre_script)"
+                                                                            matTooltip="Detalle de configuración de script">
+                                                                    visibility
+                                                                </mat-icon>
+                                                                
+                                                            </button> 
+
+                                                            <button mat-icon-button 
+                                                                    style="margin-left: 25px;"
+                                                                    (click)="verHistorialAsociaciones(element)"
+                                                                    matTooltip="Historial de asociaciones de vehículos">
+                                                                <mat-icon color="warn" >
+                                                                    history
+                                                                </mat-icon>
+                                                            </button> 
+                                                            
+                                                            <span style="color: green;">[{{ element.id_comando_equipo }}]</span> {{element.nombre_script}}
+                                                        </td>
+                                                    </ng-container>
+
+                                                    <!-- modelo Column -->
+                                                    <ng-container matColumnDef="id_vehiculo">
+                                                        <th mat-header-cell *matHeaderCellDef> Vehículo </th>
+                                                        <td mat-cell *matCellDef="let element"> 
+                                                            <span *ngIf="element.id_vehiculo !== 0" class="text-success">{{ element.nombre }}</span>
+                                                            <span *ngIf="element.id_vehiculo === 0" class="text-danger">No asignado</span> 
+                                                        </td>
+                                                    </ng-container>
+
+                                                    <ng-container matColumnDef="fecha_creacion">
+                                                        <th mat-header-cell *matHeaderCellDef > Creación</th>
+                                                        <td mat-cell *matCellDef="let element"> {{ element.fecha_creacion | convertUtcToLocalTime}} </td>
+                                                    </ng-container>
+                                                    
+                                                    <!-- Symbol Column -->
+                                                    <ng-container matColumnDef="cod_configuracion">
+                                                        <th mat-header-cell *matHeaderCellDef> Etiquetas de eventos </th>
+                                                        <td mat-cell *matCellDef="let element">  
+                                                            <mat-form-field floatLabel="never">
+                                                                <mat-label>Configuración</mat-label>
+                                                                <mat-select [(ngModel)]="element.cod_configuracion" 
+                                                                            (selectionChange)="cambiarConfiguracionDispositivo($event.value, element)">
+                                                                  <mat-option *ngFor="let conf1 of dataSourceConf.data" [value]="conf1.cod_configuracion" >
+                                                                    {{ conf1.nombre }}
+                                                                  </mat-option>
+                                                                </mat-select>
+                                                            </mat-form-field>
+                                                        </td>
+                                                    </ng-container>
+
+                                                    <!-- Symbol Column -->
+                                                    <ng-container matColumnDef="zona_horaria">
+                                                        <th mat-header-cell *matHeaderCellDef> Zona horaria </th>
+                                                        <td mat-cell *matCellDef="let element">  
+                                                            <mat-form-field floatLabel="never" class="w-full">
+                                                                <mat-label>Zona horaria</mat-label>
+                                                                <mat-select [(ngModel)]="element.zona_horaria" 
+                                                                            (selectionChange)="cambiarZonaHorariaDispositivo($event.value, element)">
+                                                                    <mat-option value="America/El_Salvador" selected>America/El_Salvador | UTC-6</mat-option>
+                                                                    <mat-option value="America/Guyana" >America/Guyana | UTC-4</mat-option>
+                                                                    <mat-option value="America/New_York" >America/New_York (zona este) | UTC-5</mat-option>
+                                                                    <mat-option value="America/Chicago" >America/Chicago (zona centro) | UTC-6</mat-option>
+                                                                    <mat-option value="America/Denver" >America/Denver (zona montaña) | UTC-7</mat-option>
+                                                                    <mat-option value="America/Los_Angeles">Ame/Los_Angeles (zona pacifico) | UTC-8</mat-option>
+                                                                </mat-select>
+                                                            </mat-form-field>
+                                                        </td>
+                                                    </ng-container>
+
+                                                    <!--gestion eliminado de dispositivo-->
+                                                    <ng-container matColumnDef="id_dispositivo">
+                                                        <th mat-header-cell *matHeaderCellDef> Gestión </th>
+                                                        <td mat-cell *matCellDef="let element" class="text-center">
+                                                            <a href="javascript: void(0)" (click)="eliminarDispositivo(element)" style="color:red">Eliminar</a> 
+                                                        </td>
+                                                    </ng-container>
+                                                    
+                                                    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                                                    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+                                            </table>
+                                            <mat-paginator [pageSizeOptions]="[7, 10, 20, 30]" showFirstLastButtons></mat-paginator>
+                                        </div>
+                                    </div>
+                                    <!--/Tabla-->
+                                </div>
+                            </div>
+                            <div class="row" [hidden]="boolAgregarDispositivo === false">
+                                <button mat-mini-fab 
+                                        color="warn"
+                                        style="position: absolute; left: 15px;top: 15px;"
+                                        (click)="mostrarOcultarFormularioRegistroDispositivo(false)"
+                                        matTooltip="Regresar a lista de dispositivos">
+                                    <mat-icon>chevron_left</mat-icon>
+                                </button>
+                                <div class="col"></div>
+                                <div class="col">
+                                    <h5>Registrar dispositivo</h5>
+                                    <mat-form-field class="w-full">
+                                        <mat-label>imei</mat-label>
+                                        <input  matInput
+                                                type="text" 
+                                                name="imei" 
+                                                [(ngModel)]="disp.imei"
+                                                id="imei">
+                                    </mat-form-field>
+                                    <mat-form-field class="w-full">
+                                        <mat-label>Modelo</mat-label>
+                                        <input  matInput
+                                                type="text" 
+                                                name="modelo" 
+                                                [(ngModel)]="disp.modelo"
+                                                id="modelo">
+                                    </mat-form-field>
+                                    <mat-form-field class="w-full">
+                                            <mat-label>FW</mat-label>
+                                            <input  matInput
+                                                    type="text" 
+                                                    name="fw" 
+                                                    [(ngModel)]="disp.fw"
+                                                    id="fw">
+                                    </mat-form-field>
+                                    <mat-form-field class="w-full">
+                                        <mat-label>Zona horaria</mat-label>
+                                        <mat-select [(value)]="zonaHoraria">
+                                            <mat-option value="America/El_Salvador" selected>America/El_Salvador | UTC-6</mat-option>
+                                            <mat-option value="America/Guyana" >America/Guyana | UTC-4</mat-option>
+                                            <mat-option value="America/New_York" >America/New_York (zona este) | UTC-5</mat-option>
+                                            <mat-option value="America/Chicago" >America/Chicago (zona centro) | UTC-6</mat-option>
+                                            <mat-option value="America/Denver" >America/Denver (zona montaña) | UTC-7</mat-option>
+                                            <mat-option value="America/Los_Angeles">Ame/Los_Angeles (zona pacifico) | UTC-8</mat-option>
+                                        </mat-select>
+                                    </mat-form-field>
+                                    <button mat-raised-button 
+                                            color="warn"
+                                            (click)="registrarDispositivo()"
+                                            class="w-full"
+                                            [disabled]="disableDispositivo">
+                                            <mat-icon>
+                                                <mat-spinner *ngIf="visible === 1" color="warn" diameter="20">
+                                                </mat-spinner>
+                                            </mat-icon>
+                                            
+                                            Registrar dispositivo
+                                    </button>
+                                    <br>
+                                    <br>
+                                    <h5>Registrar por medio de EXCEL</h5>
+                                    <div class="row">
+                                         <div class="col">
+                                            <input type="file" (change)="onFileChange($event)" />
+                                            <div id="output"></div>
+                                            <br>
+                                            <!--<app-file-uploader (onCompleteItem)="onCompleteItem($event)"></app-file-uploader>-->
+                                        </div>
+                                    </div>
+                                    <!--h5>Registrar Geocercas massy</h5>
+                                    <div class="row">
+                                        <div class="col">
+                                           <input type="file" (change)=" crearGeocercaPorExcel($event)" />
+                                           <div id="output2"></div>
+                                           <br>
+                                           <app-file-uploader (onCompleteItem)="onCompleteItem($event)"></app-file-uploader>
+                                       </div>
+                                   </div-->
+                                </div>
+                                <div class="col"></div>
+                            </div>
+                        </mat-card>
+                        <br>
+                        <!--/gestion de dispositivos-->
+                    </mat-tab>
+                    <!--/tab gestion de dispositivos-->
+                    <!--tab gestion de vehiculos-->
+                    <mat-tab color="warn">
+                        <ng-template mat-tab-label>
+                            <mat-icon class="example-tab-icon">directions_car_rounded</mat-icon>
+                            Vehículos
+                        </ng-template>
+                        <!--contenido del tab de vehiculos-->
+                        <mat-card>
+                            <div class="row">
+                                <div class="col-8">
+                                    <!--buscador de vehículos-->
+                                    <mat-form-field>
+                                        <mat-icon matSuffix>search</mat-icon>
+                                        <input matInput (keyup)="applyFilterVehicles($event.target.value)" placeholder="Filtrar">
+                                    </mat-form-field>
+                                    <!--Buscador de vehiculos-->
+                                    <!--Tabla-->
+                                    <div class="example-container1 mat-elevation-z8">
+                                        <div class="example-loading-shade"
+                                            *ngIf="isLoadingResults">
+                                            <mat-spinner *ngIf="isLoadingResults"></mat-spinner>
+                                        </div>
+                                        <div class="example-table-container">
+                                            <mat-progress-bar mode="indeterminate" color="warn" *ngIf="spinner2"></mat-progress-bar>
+                                            <table mat-table [dataSource]="dataSourceVehicle">
+                                                <!-- nombre vehiculo Column -->
+                                                <ng-container matColumnDef="nombre">
+                                                    <th mat-header-cell *matHeaderCellDef>Nombre</th>
+                                                    <td mat-cell *matCellDef="let element"> {{element.nombre}} </td>
+                                                </ng-container>
+                                                
+                                                <!-- placa vehiculo Column -->
+                                                <ng-container matColumnDef="placa">
+                                                    <th mat-header-cell *matHeaderCellDef>Placa</th>
+                                                    <td mat-cell *matCellDef="let element"> {{element.placa}} </td>
+                                                </ng-container>
+                                                
+                                                <!-- imei vehiculo Column -->
+                                                <ng-container matColumnDef="imei">
+                                                    <th mat-header-cell *matHeaderCellDef> Dispositivo (imei)</th>
+                                                    <td mat-cell *matCellDef="let element"> 
+                                                        <span *ngIf="element.imei !== '0'" class="text-success">{{ element.imei }}</span>
+                                                        <span *ngIf="element.imei === '0' || element.imei === '' " class="text-danger">No asignado</span> 
+                                                    </td>
+                                                </ng-container>
+
+                                                <!-- marca vehiculo Column -->
+                                                <ng-container matColumnDef="marca">
+                                                    <th mat-header-cell *matHeaderCellDef> Marca </th>
+                                                    <td mat-cell *matCellDef="let element">{{element.marca}}</td>
+                                                </ng-container>
+
+                                                <ng-container matColumnDef="fecha_creacion">
+                                                    <th mat-header-cell *matHeaderCellDef > Creación</th>
+                                                    <td mat-cell *matCellDef="let element"> {{ element.fecha_creacion | convertUtcToLocalTime}} </td>
+                                                </ng-container>
+
+                                                <!--gestion editado y eliminado de dispositivo-->
+                                                <ng-container matColumnDef="id_dispositivo">
+                                                    <th mat-header-cell *matHeaderCellDef> Gestión </th>
+                                                    <td mat-cell *matCellDef="let element">
+                                                        <button mat-icon-button 
+                                                                style="margin-left: 25px;"
+                                                                (click)="verHistorialAsociacionesVehiculo(element)"
+                                                                matTooltip="Historial de asociaciones de dispositivos">
+                                                            <mat-icon color="warn">
+                                                                history
+                                                            </mat-icon>
+                                                        </button>  
+                                                        <a href="javascript: void(0)" (click)="dialogEditarVehiculo(element)">Editar</a> | 
+                                                        <a href="javascript: void(0)" (click)="eliminarVehiculo(element)" style="color:red">Eliminar</a>
+                                                    </td>
+                                                </ng-container>
+
+                                                <tr mat-header-row *matHeaderRowDef="displayedColumnsVehicle"></tr>
+                                                <tr mat-row 
+                                                    *matRowDef="let row; columns: displayedColumnsVehicle;" 
+                                                    (click)="getRow(row)"
+                                                    class="example-element-row"></tr>
+                                            </table>
+                                            <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons #pag></mat-paginator>
+                                        </div>
+                                    </div>
+                                    <!--/Tabla-->
+                                </div>
+                                <div class="col-4">
+                                    <h5>Registrar vehículo</h5>
+                                    <div class="row">
+                                        <div class="col">
+                                            <mat-form-field class="w-full">
+                                                <mat-label>Master</mat-label>
+                                                <mat-select value="1">
+                                                    <mat-option value="1">Master Taxis</mat-option>
+                                                </mat-select>
+                                            </mat-form-field>
+                                            <mat-form-field class="w-full">
+                                                <mat-label>Nombre de vehículo</mat-label>
+                                                <input  matInput
+                                                        type="text" 
+                                                        name="nombreVehiculo" 
+                                                        [(ngModel)]="regVehiculo.nombre"
+                                                        id="nombreVehiculo">
+                                            </mat-form-field>
+                                            <mat-form-field class="w-full">
+                                                <mat-label>Año</mat-label>
+                                                <input  matInput
+                                                        type="text" 
+                                                        name="yearVehiculo" 
+                                                        [(ngModel)]="regVehiculo.year_vehicle"
+                                                        id="yearVehiculo">
+                                            </mat-form-field>
+                                            <mat-form-field class="w-full">
+                                                <mat-label>Marca</mat-label>
+                                                <input  matInput
+                                                        type="text" 
+                                                        name="marcaVehiculo" 
+                                                        [(ngModel)]="regVehiculo.marca"
+                                                        id="marcaVehiculo">
+                                            </mat-form-field>
+                                            <mat-form-field class="w-full">
+                                                <mat-label>Modelo</mat-label>
+                                                <input  matInput
+                                                        type="text" 
+                                                        name="modeloVehiculo" 
+                                                        [(ngModel)]="regVehiculo.modelo"
+                                                        id="modeloVehiculo">
+                                            </mat-form-field>
+                                        </div>
+                                        <div class="col">
+                                            <mat-form-field class="w-full">
+                                                <mat-label>Placa</mat-label>
+                                                <input  matInput
+                                                        type="text" 
+                                                        name="placaVehiculo" 
+                                                        [(ngModel)]="regVehiculo.placa"
+                                                        id="placaVehiculo">
+                                            </mat-form-field>
+                                            <mat-form-field class="w-full">
+                                                <mat-label>Color</mat-label>
+                                                <input  matInput
+                                                        type="text" 
+                                                        name="colorVehiculo" 
+                                                        [(ngModel)]="regVehiculo.color"
+                                                        id="colorVehiculo">
+                                            </mat-form-field>
+                                            <mat-form-field class="w-full">
+                                                <mat-label>VIN</mat-label>
+                                                <input  matInput
+                                                        type="text" 
+                                                        name="vinVehiculo" 
+                                                        [(ngModel)]="regVehiculo.vin"
+                                                        id="vinVehiculo">
+                                            </mat-form-field>
+                                            <mat-form-field class="w-full">
+                                                <mat-label>Descripción</mat-label>
+                                                <input  matInput
+                                                        type="text" 
+                                                        name="descripcionVehiculo" 
+                                                        [(ngModel)]="regVehiculo.descripcion"
+                                                        id="descripcionVehiculo">
+                                            </mat-form-field>
+                                            <!--nuevo select con busqueda-->
+                                            <mat-form-field>
+                                                <mat-select [formControl]="bankCtrlImeis" 
+                                                            placeholder="Seleccionar dispositivo" 
+                                                            #singleSelectImeis>
+                                                    <mat-option>
+                                                        <ngx-mat-select-search [formControl]="bankFilterCtrlImeis"></ngx-mat-select-search>
+                                                    </mat-option>
+                                                    <ng-container *ngFor="let ob of filteredBanksImeis | async">
+                                                        <mat-option *ngIf="ob.asociado === 'false'" [value]="ob" [disabled]="ob.disabled === 'true'">{{ ob.imei }}</mat-option>
+                                                    </ng-container>
+                                                    
+                                                </mat-select>
+                                            </mat-form-field>
+                                            <!--/nuevo select con busqueda-->
+                                            <!--lista grupos con filtro de busqueda-->
+                                            <mat-form-field>
+                                                <mat-select [formControl]="bankCtrlGrupos" 
+                                                            placeholder="Grupos" 
+                                                            #singleSelectGrupos
+                                                            (selectionChange)="seleccionUsuarioVehiculos($event)">
+                                                    <mat-option>
+                                                        <ngx-mat-select-search [formControl]="bankFilterCtrlGrupos"></ngx-mat-select-search>
+                                                    </mat-option>
+                                                    <mat-option *ngFor="let grupo of filteredBanksGrupos | async" [value]="grupo">
+                                                        {{ grupo.nombre_grupo }}
+                                                    </mat-option>
+                                                </mat-select>
+                                            </mat-form-field>
+                                            <!--/lista grupos filtro de busqueda-->
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col">
+                                            <button mat-raised-button 
+                                                color="warn" 
+                                                class="w-full"
+                                                (click)="registrarVehiculo()"
+                                                [disabled]="dataValidoVehiculo">
+                                                <mat-icon *ngIf="spinnerVehiculoRegistrar">
+                                                    <mat-spinner  color="accent" diameter="20">
+                                                    </mat-spinner>
+                                                </mat-icon>
+                                                Registrar vehículo
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </mat-card>
+                        <br>
+                       <!--/contenido del tab de vehiculos-->
+                    </mat-tab>
+                    <!--/tab gestion de vehiculos-->
+                    <!--tab gestion de asociacion-->
+                    <mat-tab color="warn">
+                        <ng-template mat-tab-label>
+                            <mat-icon class="example-tab-icon">group_work</mat-icon>
+                            Asociación
+                        </ng-template>
+                        <mat-card>
+                            <div class="row">
+                                <!--Tabla de vehiculos asociados-->
+                                <div class="col">
+                                    <!--buscador de vehículos asociado-->
+                                    <mat-form-field>
+                                        <mat-icon matSuffix>search</mat-icon>
+                                        <input matInput (keyup)="applyFilterVehiclesAsociacion($event.target.value)" placeholder="Filtrar">
+                                    </mat-form-field>
+                                    <!--Buscador de vehiculos asociado-->
+                                    <!--Tabla de vehiculos asociados-->
+                                    <div class="example-container1 mat-elevation-z8">
+                                        <div class="example-loading-shade"
+                                            *ngIf="isLoadingResults">
+                                            <mat-spinner *ngIf="isLoadingResults"></mat-spinner>
+                                        </div>
+                                        <div class="example-table-container">
+                                            <table mat-table [dataSource]="dataSourceVehicleA">
+                                                <!-- nombre Column -->
+                                                <ng-container matColumnDef="nombre">
+                                                    <th mat-header-cell *matHeaderCellDef>Nombre</th>
+                                                    <td mat-cell *matCellDef="let element"> {{element.nombre}} </td>
+                                                </ng-container>
+                                                
+                                                <!-- placa Column -->
+                                                <ng-container matColumnDef="placa">
+                                                    <th mat-header-cell *matHeaderCellDef>Placa</th>
+                                                    <td mat-cell *matCellDef="let element"> {{element.placa}} </td>
+                                                </ng-container>
+                                                
+                                                <!-- imei Column -->
+                                                <ng-container matColumnDef="imei">
+                                                    <th mat-header-cell *matHeaderCellDef> Dispositivo (imei)</th>
+                                                    <td mat-cell *matCellDef="let element"> 
+                                                        <span *ngIf="element.imei !== '0'" class="text-success">{{ element.imei }}</span>
+                                                        <span *ngIf="element.imei === '0' || element.imei === '' " class="text-danger">No asignado</span> 
+                                                    </td>
+                                                </ng-container>
+
+                                                <!-- marca Column -->
+                                                <ng-container matColumnDef="marca">
+                                                    <th mat-header-cell *matHeaderCellDef> Marca </th>
+                                                    <td mat-cell *matCellDef="let element">{{element.marca}}</td>
+                                                </ng-container>
+
+                                                <tr mat-header-row *matHeaderRowDef="displayedColumnsVehicleA"></tr>
+                                                <tr mat-row 
+                                                    *matRowDef="let row; columns: displayedColumnsVehicleA;" 
+                                                    (click)="obtenerDataVehiculoSeleccionado(row)"
+                                                    class="example-element-row"></tr>
+                                            </table>
+                                            <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons #pagA></mat-paginator>
+                                        </div>
+                                    </div>
+                                    <!--/Tabla de vehiculos asociados-->
+                                </div>
+                                <!--Tabla de vehiculos asociados-->
+                                <!--Asociar/desasociar vehiculo de dispositivo-->
+                                <div class="col">
+                                    <mat-vertical-stepper [linear]="isLinear" #stepper color="prmiary">
+                                        <mat-step [stepControl]="firstFormGroup">
+                                            <ng-template matStepLabel>Desasociar vehículo</ng-template>
+                                            <mat-form-field>
+                                                <input  matInput 
+                                                        placeholder="Nombre"
+                                                        readonly="!editable"
+                                                        name="nombrevehiculoA"
+                                                        [(ngModel)]="vehiculoAsociado.nombre"
+                                                        id="nombrevehiculoA">
+                                            </mat-form-field>
+                                            <mat-form-field>
+                                                <input  matInput 
+                                                        placeholder="ID Vehículo"
+                                                        readonly="!editable"
+                                                        name="idvehiculoA"
+                                                        [(ngModel)]="vehiculoAsociado.id_vehiculo"
+                                                        id="idvehiculoA">
+                                            </mat-form-field>
+                                            <form [formGroup]="firstFormGroup">
+                                                <mat-form-field>
+                                                    <input  matInput 
+                                                            placeholder="IMEI" 
+                                                            formControlName="firstCtrl"
+                                                            readonly="!editable"
+                                                            name="imeivehiculoA"
+                                                            [(ngModel)]="vehiculoAsociado.imei"
+                                                            id="imeivehiculoA" 
+                                                            required>
+                                                </mat-form-field>
+                                                <div>
+                                                    <button mat-raised-button 
+                                                            color="warn"
+                                                            (click)="confirmacionDesasociar()">
+                                                            Desasociar
+                                                    </button>
+                                                    <br><br>
+                                                    <div class="alert alert-primary" role="alert" *ngIf="isDesasociar">
+                                                        <div class="row">
+                                                            <div class="col">
+                                                                ¿Está seguro que quiere desasociar el {{ vehiculoAsociado.nombre }}? 
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col">
+                                                                <button mat-button
+                                                                        (click)="limpiarInputs()">
+                                                                    Cancelar
+                                                                </button>
+                                                            </div>
+                                                            <div class="col">
+                                                                <button matStepperNext
+                                                                    mat-raised-button 
+                                                                    color="warn" >
+                                                                Aceptar
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </mat-step>
+                                        <mat-step [stepControl]="secondFormGroup">
+                                            <form [formGroup]="secondFormGroup">
+                                            <ng-template matStepLabel>Asociar a un nuevo dispositivo</ng-template>
+                                            <mat-form-field class="w-full">
+                                                <mat-label>Dispositivo</mat-label>
+                                                <mat-select [(value)]="objetoSeleccionadoImei"
+                                                            formControlName="secondCtrl" required>
+                                                    <mat-option value="" selected>None</mat-option>
+                                                    <ng-container *ngFor="let ob of dataSource.data">
+                                                        <mat-option *ngIf="ob.asociado === 'false'" [value]="ob" [disabled]="ob.disabled === 'true'">{{ ob.imei }}</mat-option>
+                                                    </ng-container>
+                                                </mat-select>
+                                            </mat-form-field>
+                                            <div>
+                                                <button mat-button matStepperPrevious>Atras</button>
+                                                <button mat-button matStepperNext>Siguiente</button>
+                                            </div>
+                                            </form>
+                                        </mat-step>
+                                        <mat-step>
+                                            <ng-template matStepLabel>Verificación de datos</ng-template>
+                                            <p>
+                                                Nombre: {{ vehiculoAsociado.nombre }}
+                                            </p>
+                                            <p>
+                                                ID Vehículo: {{ vehiculoAsociado.id_vehiculo }}
+                                            </p>
+                                            <p style="color: red">
+                                                dispositivo a desasociar (imei): {{ vehiculoAsociado.imei }}
+                                            </p>
+                                            <p style="color: green">
+                                                nuevo dispositivo (imei): {{ objetoSeleccionadoImei.imei }}
+                                            </p>
+                                            <div>
+                                                <button mat-button matStepperPrevious>Atras</button>
+                                                <button mat-raised-button 
+                                                        color="warn" 
+                                                        (click)="reasignarImei()">
+                                                    <mat-icon>
+                                                        <mat-spinner *ngIf="loaderSetImei === true" color="warn" diameter="20">
+                                                        </mat-spinner>
+                                                    </mat-icon>
+                                                        Guardar cambios
+                                                </button>
+                                            </div>
+                                        </mat-step>
+                                    </mat-vertical-stepper>                                                          
+                                </div>
+                                <!--Asociar/desasociar vehiculo de dispositivo-->
+                            </div>
+                        </mat-card>
+                        <br>
+                    </mat-tab>
+                    <!--/ tab gestion de asociacion-->
+                    <!--Configuración de etiquetas-->
+                    <mat-tab color="warn">
+                        <ng-template mat-tab-label>
+                            <mat-icon class="example-tab-icon">build_rounded</mat-icon>
+                            Etiquetas de eventos
+                        </ng-template>
+                        <mat-card>
+                            <div class="row">
+                                <div class="col">
+                                    <!--buscador de vehículos asociado-->
+                                    <mat-form-field>
+                                        <mat-icon matSuffix>search</mat-icon>
+                                        <input matInput (keyup)="applyFilterConf($event.target.value)" placeholder="Filtrar">
+                                    </mat-form-field>
+                                    <!--Buscador de vehiculos asociado-->
+                                    <!--Tabla de vehiculos asociados-->
+                                    <div class="example-container1 mat-elevation-z8">
+                                        <div class="example-loading-shade"
+                                            *ngIf="isLoadingResults">
+                                            <mat-spinner *ngIf="isLoadingResults"></mat-spinner>
+                                        </div>
+                                        <div class="example-table-container">
+                                            <table mat-table [dataSource]="dataSourceConf">
+                                                
+                                                <!-- nombre Column -->
+                                                <ng-container matColumnDef="id">
+                                                    <th mat-header-cell *matHeaderCellDef>ID</th>
+                                                    <td mat-cell *matCellDef="let element"> {{element.id}} </td>
+                                                </ng-container>
+
+                                                <!-- nombre Column -->
+                                                <ng-container matColumnDef="nombre">
+                                                    <th mat-header-cell *matHeaderCellDef>Nombre</th>
+                                                    <td mat-cell *matCellDef="let element"> {{element.nombre}} </td>
+                                                </ng-container>
+                                                
+                                                <!-- placa Column -->
+                                                <ng-container matColumnDef="fecha">
+                                                    <th mat-header-cell *matHeaderCellDef>Fecha</th>
+                                                    <td mat-cell *matCellDef="let element"> {{converterUTCToLocalDate(element.fecha)}} </td>
+                                                </ng-container>
+
+                                                 <!-- modelo Column -->
+                                                <ng-container matColumnDef="gestion">
+                                                    <th mat-header-cell *matHeaderCellDef> Gestión </th>
+                                                    <td mat-cell *matCellDef="let element"> 
+                                                        <a href="javascript: void(0)" (click)="obtenerConfiguracionSeleccionado(element)">Editar</a> 
+                                                    </td>
+                                                </ng-container>
+
+                                                <tr mat-header-row *matHeaderRowDef="displayedColumnsConf"></tr>
+                                                <tr mat-row 
+                                                    *matRowDef="let row; columns: displayedColumnsConf;" 
+                                                    class="example-element-row"></tr>
+                                            </table>
+                                            <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons #pagConf></mat-paginator>
+                                        </div>
+                                    </div>
+                                    <!--/Tabla de vehiculos asociados-->
+                                </div>
+                                <div class="col">
+                                    <nb-card size="medium">
+                                        <nb-card-header>
+                                          <div class="row">
+                                            <div class="col">
+                                                <mat-form-field class="w-full">
+                                                    <mat-label>Nombre configuración</mat-label>
+                                                    <input  matInput
+                                                            type="text" 
+                                                            name="nombre" 
+                                                            [(ngModel)]="nombre"
+                                                            id="nombre">
+                                                </mat-form-field>
+                                            </div>
+                                            <div class="col">
+                                                <button mat-raised-button 
+                                                        color="warn"
+                                                        (click)="registrarConfiguracion()"
+                                                        class="w-full">
+                                                        <mat-icon>
+                                                            <mat-spinner *ngIf="visible === 1" color="warn" diameter="20">
+                                                            </mat-spinner>
+                                                        </mat-icon>
+                                                        Registrar
+                                                </button>
+                                            </div>
+                                          </div>
+                                        </nb-card-header>
+                                        <nb-list>
+                                            <nb-list-item>
+                                                <div class="row">
+                                                    <div class="col">
+                                                        <mat-form-field>
+                                                            <mat-select [formControl]="bankCtrl2" placeholder="Evento" #singleSelect2>
+                                                            <mat-option>
+                                                                <ngx-mat-select-search [formControl]="bankFilterCtrl2"></ngx-mat-select-search>
+                                                            </mat-option>
+                                                            <mat-option *ngFor="let bank2 of filteredBanks2 | async" [value]="bank2">
+                                                                {{bank2.cod}}
+                                                            </mat-option>
+                                                            </mat-select>
+                                                        </mat-form-field>
+                                                    </div>
+                                                    <div class="col">
+                                                        <mat-form-field>
+                                                            <mat-select [formControl]="bankCtrl" placeholder="Etiqueta" #singleSelect>
+                                                            <mat-option>
+                                                                <ngx-mat-select-search [formControl]="bankFilterCtrl"></ngx-mat-select-search>
+                                                            </mat-option>
+                                                            <mat-option *ngFor="let bank of filteredBanks | async" [value]="bank">
+                                                                {{bank.nombre}} | <mat-icon [ngStyle]="{'color': bank.color_icono }">{{ bank.descripcion_icono }}</mat-icon>
+                                                            </mat-option>
+                                                            </mat-select>
+                                                        </mat-form-field>
+                                                    </div>
+                                                    <div class="col">
+                                                        <button mat-raised-button (click)="agregarItemConfiguracion()"> <mat-icon>add</mat-icon> </button>
+                                                    </div>
+                                                </div>
+                                            </nb-list-item>
+                                            <nb-list-item *ngFor="let item of configuracion.configuracion">
+                                                <div class="w-full d-flex justify-content-between">
+                                                    <div>
+                                                        Evento: <strong> {{ item.cod_evento }}</strong>
+                                                        Etiqueta: <strong> {{ item.etiqueta }} </strong>
+                                                    </div>
+                                                    <div>
+                                                        <a href="javascript: void(0)" style="color:red" (click)="eliminarEvento(item)">Eliminar</a>
+                                                    </div>  
+                                                </div>    
+                                            </nb-list-item>
+                                        </nb-list>
+                                    </nb-card>
+                                </div>
+                            </div>
+                        </mat-card>
+                        <br>
+                    </mat-tab>
+                    <!--/Configuracion de etiquetas-->
+                    <!--Configuracion de dispositivos-->
+                    <mat-tab color="warn">
+                        <ng-template mat-tab-label>
+                            <mat-icon class="example-tab-icon">settings_remote</mat-icon>
+                            Configuración script
+                        </ng-template>
+                        <mat-card>
+                            <div class="row">
+                                <div class="col-6">
+                                    <h6 class="text-center">Subir nuevas configuraciones</h6>
+                                    <div style="text-align:center">
+                                        <app-material-file-upload (complete)="onFileComplete($event)"></app-material-file-upload>
+                                    </div>
+                                    <nb-card size="small">
+                                        <nb-card-header>
+                                            <div class="row">
+                                                <div class="col">
+                                                    {{ nombreArchivo }}
+                                                </div>
+                                                <div class="col d-flex d-flex justify-content-end">
+                                                    <button mat-raised-button color="warn" (click)="guardarNuevaConfiguracionEq()"> <mat-icon>save</mat-icon> Guardar</button>
+                                                </div>
+                                            </div>
+                                            
+                                        </nb-card-header>
+                                        <nb-list style="background: #eff0f1">
+                                            <nb-list-item *ngFor="let list of listaConfiguracion; index as i"
+                                                            style="padding-bottom: 2px;padding-top: 2px;">
+                                                <pre style="margin-bottom: 0px; font-size: 13px;"> {{ i+1 }} {{ list }} </pre>
+                                            </nb-list-item>
+                                        </nb-list>
+                                    </nb-card>
+                                </div>
+                                <div class="col-6">
+                                    <h6 class="text-center">Cargar configuración a equipo</h6>
+                                    <br><br>
+                                    <nb-card size="small" style="margin-top:4px;overflow-x: scroll !important;" id="consola-comunicacion">
+                                        <nb-card-header>
+                                            <div class="row">
+                                                <div class="col-9" style="margin-top: -12px; margin-bottom: -12px">
+                                                    <!--lista vehiculos-->
+                                                    <mat-form-field>
+                                                        <mat-select [formControl]="bankCtrlDispositivo" 
+                                                                    placeholder="Equipos" 
+                                                                    #singleSelectDispositivo
+                                                                    (selectionChange)="dispositivoSeleccionado(bankCtrlDispositivo)">
+                                                            <mat-option>
+                                                                <ngx-mat-select-search [formControl]="bankFilterCtrlDispositivo"></ngx-mat-select-search>
+                                                            </mat-option>
+                                                            <mat-option *ngFor="let dispositivo of filteredBanksDispositivo | async" [value]="dispositivo">
+                                                                {{ dispositivo.nombre }} - {{ dispositivo.imei }}
+                                                            </mat-option>
+                                                        </mat-select>
+                                                    </mat-form-field>
+                                                    <!--/lista vehiculo-->
+                                                    <!--lista de configuraciones Seleccionada-->
+                                                    <mat-form-field>
+                                                        <mat-select [formControl]="bankCtrlComandos" 
+                                                                    placeholder="Configuraciones" 
+                                                                    #singleSelectComandos
+                                                                    (selectionChange)="changeConfiguracionSeleccionada()">
+                                                            <mat-option>
+                                                                <ngx-mat-select-search [formControl]="bankFilterCtrlComandos"></ngx-mat-select-search>
+                                                            </mat-option>
+                                                            <mat-option *ngFor="let config of filteredBanksComandos | async" [value]="config">
+                                                                [{{ config.id }}] {{config.nombre}}
+                                                            </mat-option>
+                                                        </mat-select>
+                                                    </mat-form-field>
+                                                    <!--lista de configuraciones seleccionada-->
+                                                </div>
+                                                
+                                                <div class="col-3 d-flex d-flex justify-content-end">
+                                                    <button mat-icon-button 
+                                                            matTooltip="Ver comandos de configuración"
+                                                            color="warn"
+                                                            *ngIf="verConfiguraciones"
+                                                            (click)="dialogComandosConfiguracion()">
+                                                        <mat-icon>visibility</mat-icon>
+                                                    </button>
+                                                    <button mat-raised-button 
+                                                            color="warn" 
+                                                            (click)="cargarScriptAEquipo()"> 
+                                                            <mat-icon>send</mat-icon> Cargar
+                                                    </button>
+                                                </div>
+                                            </div>                    
+                                        </nb-card-header>
+                                        <nb-list style="background: #eff0f1; overflow-x: scroll !important;">
+                                            <nb-list-item *ngFor="let log of logComandos"
+                                                            style="padding-bottom: 2px;
+                                                                    padding-top: 2px;
+                                                                    font-size: 13px;">
+                                                <pre style="margin-bottom: 0px; color:#ff5722" *ngIf="log.cliente === true" >{{ log.num }} {{ log.mensaje }}</pre>
+                                                <pre style="margin-bottom: 0px;color: #1435ef" *ngIf="log.cliente === false" class="float-right">R: {{ log.mensaje }}</pre>
+                                            </nb-list-item>
+                                        </nb-list>
+                                    </nb-card>
+                                </div>
+                            </div>
+                            <br>
+                            <!--Tabla-->
+                            <div class="example-container1 mat-elevation-z8">
+                                <div class="example-loading-shade"
+                                    *ngIf="isLoadingResults">
+                                    <mat-spinner *ngIf="isLoadingResults"></mat-spinner>
+                                </div>
+                                <div class="example-table-container">
+                                    <table mat-table [dataSource]="dataSourceConfScript">
+                                        
+                                        <!-- nombre script Column -->
+                                        <ng-container matColumnDef="id">
+                                            <th mat-header-cell *matHeaderCellDef>id</th>
+                                            <td mat-cell *matCellDef="let element"> {{element.id}} </td>
+                                        </ng-container>
+
+                                        <!-- nombre script Column -->
+                                        <ng-container matColumnDef="cod_configuracion_eq">
+                                            <th mat-header-cell *matHeaderCellDef>codigo</th>
+                                            <td mat-cell *matCellDef="let element"> {{element.cod_configuracion_eq}} </td>
+                                        </ng-container>
+                                        
+                                        <!-- nombre script Column -->
+                                        <ng-container matColumnDef="nombre">
+                                            <th mat-header-cell *matHeaderCellDef>Nombre</th>
+                                            <td mat-cell *matCellDef="let element"> {{element.nombre}} </td>
+                                        </ng-container>
+
+                                        <!--gestion editado y eliminado de dispositivo-->
+                                        <ng-container matColumnDef="cod_configuracion">
+                                            <th mat-header-cell *matHeaderCellDef> Gestión </th>
+                                            <td mat-cell *matCellDef="let element"> 
+                                                <!--<a href="javascript: void(0)" (click)="actualizarNombreConfiguracionScript(element)">Editar</a> |--> 
+                                                <a href="javascript: void(0)" (click)="eliminarfiguracionScript(element)" style="color:red">Eliminar</a> 
+                                            </td>
+                                        </ng-container>
+
+                                        <tr mat-header-row *matHeaderRowDef="displayedColumnsConfScript"></tr>
+                                        <tr mat-row 
+                                            *matRowDef="let row; columns: displayedColumnsConfScript;" 
+                                            class="example-element-row"></tr>
+                                    </table>
+                                    <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons #pag></mat-paginator>
+                                </div>
+                            </div>
+                            <!--/Tabla-->
+                        </mat-card>
+                    </mat-tab>
+                    <!--/Configuracion de dispositivos-->
+                </mat-tab-group>
+                <!--/tabs-->
+            </mat-drawer-container>
+            <!--/Container de sidenav y content de mapa-->
+        </mat-drawer-content>
+        <!--CONTENIDO DE LA APP-->
+</mat-drawer-container>

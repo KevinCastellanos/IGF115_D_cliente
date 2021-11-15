@@ -1,0 +1,32 @@
+<div class="row">
+    <div class="col-9">
+            <h5>Consola de comandos para equipos gps</h5>
+            <hr>
+            <div id="chat-mensaje">
+                <li class="list-group-item" *ngFor="let msg of mensajes">{{ msg.de }}: {{ msg.cuerpo }}</li>
+            </div>
+            <form (ngSubmit)="enviar()">
+                <input  type="text"
+                        [(ngModel)]="texto"
+                        class="form-control chat-input"
+                        name="texto"
+                        placeholder="Mensaje..."
+                        autofocus
+                        autocomplete="off">
+            </form>
+    </div>
+    <div class="col-3">
+            <h5>Usuarios y equipos activos</h5>
+            <hr>
+            <ul class="list-group">
+                <li class="list-group-item" *ngFor="let usuario of usuariosActivosObs | async">
+                    <input type="checkbox" (change)="changeStatus(usuario.id,$event)" [checked]="usuario.check"> 
+                    {{usuario.nombre}}
+                    <span class="badge badge-primary"> {{usuario.sala}} </span>
+                    <br>
+                    <span class="badge badge-info"> {{usuario.id}} </span>
+                </li>
+            </ul>
+    </div>
+</div>
+

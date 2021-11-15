@@ -1,0 +1,33 @@
+
+.one {
+    background: url(https://aps.tkontrol.com/assets/default.PNG) ;
+    background-repeat: no-repeat;
+    background-size: 250px;
+}
+.two {
+    background: url(https://aps.tkontrol.com/assets/ampliada.PNG) ;
+    background-repeat: no-repeat;
+    background-size: 250px;
+}
+label {
+    display: inline-block;
+    position: relative;
+    cursor: pointer;
+    width: 250px;
+    height: 140px;
+    filter: grayscale(100%) opacity(70%);
+    transition: all 0.5s ease;
+}
+label:hover {
+    filter: grayscale(50%) opacity(85%);
+    box-shadow: 0 0 15px #777;
+}
+input {
+    position: absolute;
+    z-index: 10;
+    outline: none;
+}
+input:active + label, input:checked + label {
+    filter: none;
+    box-shadow: 0 2px 20px #777;
+}

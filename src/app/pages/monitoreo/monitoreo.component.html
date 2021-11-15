@@ -1,0 +1,426 @@
+<mat-drawer-container class="example-container2" hasBackdrop="true">
+    <!--Menu lateral izquierdo-->
+    <mat-drawer #drawer2 mode="over">
+        <!-- definimos el ancho del sidenav mode=OVER -->
+        <div class="W-300 overlay">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col p-0">
+                        <mat-toolbar-row >
+                            <h5>{{ localStorageService.lenguaje.lan075 }}</h5>
+                            <span class="flex-right"></span>
+                            <button mat-icon-button
+                                    color="primary"
+                                    (click)="drawer2.toggle()">
+                                    <mat-icon>close</mat-icon>
+                            </button>
+                        </mat-toolbar-row>
+                        <mat-nav-list>
+                            <mat-divider></mat-divider>
+                            <a  mat-list-item 
+                                routerLink="/principal"> 
+                                <mat-icon mat-list-icon class="s-r-5">
+                                    home
+                                </mat-icon>
+                                {{ localStorageService.lenguaje.lan078 }}
+                            </a>
+
+                            <mat-divider></mat-divider>
+                            <div *ngFor="let modulo of modulos">
+                                <a  *ngIf="modulo.id_modulo !== 16"
+                                    routerLinkActive="active-link"
+                                    mat-list-item [routerLink]="['/'+modulo.enrutador]"
+                                    (click)="limpiarVehiculoSeleccionado()"> 
+                                    <mat-icon mat-list-icon class="s-r-5">
+                                        {{ modulo.icono }}
+                                    </mat-icon>
+                                    {{ modulo.nombre | traductor }}
+                                    <mat-divider></mat-divider>
+                                </a>
+                                <a  *ngIf="modulo.id_modulo === 16"
+                                    routerLinkActive="active-link"
+                                    mat-list-item 
+                                    (click)="limpiarVehiculoSeleccionado()"
+                                    [href]="modulo.enrutador + 'user=' + localStorageService.usuario.usuario.usuario + '&pass=' + localStorageService.usuario.usuario.password"> 
+                                    <mat-icon mat-list-icon class="s-r-5">
+                                        {{ modulo.icono }}
+                                    </mat-icon>
+                                    {{ modulo.nombre | traductor }}
+                                    <mat-divider></mat-divider>
+                                </a>
+                            </div>
+                        </mat-nav-list>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- fin de definicion del ancho del sidenav mode=OVER -->
+    </mat-drawer>
+    <!--/Menu lateral izquierdo-->
+    <!--CONTENIDO DE LA APP DE MAPA-->
+    <mat-drawer-content class="p-r-c">
+        <!--TOOLBAR-->
+        <mat-toolbar color="warn" class="fixed-top">
+                <mat-toolbar-row>
+                    <button mat-icon-button (click)="drawer2.toggle()">
+                            <mat-icon>menu</mat-icon>
+                    </button>
+                    <span style="margin-left: 5px">Flota de taxis</span>
+                    <button mat-icon-button routerLink="/principal" (click)="limpiarVehiculoSeleccionado()"
+                            [matTooltip]="localStorageService.lenguaje.lan080"> 
+                        <mat-icon mat-list-icon>
+                            home
+                        </mat-icon>
+                    </button>
+                    <span class="flex-right"></span>
+                    <img src="assets/logo_taxi.PNG" alt="Logo apparel" height="60px" class="img-center">
+                    
+                    <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Example icon-button with a menu">
+                        <mat-icon>more_vert</mat-icon>
+                    </button>
+                    <mat-menu #menu="matMenu" xPosition="before">
+                        <button mat-menu-item>
+                          <mat-icon>person</mat-icon>
+                          <span>{{ localStorageService.usuario.usuario.nombre }} {{ localStorageService.usuario.usuario.apellido }} </span>
+                        </button>
+                        <button mat-menu-item
+                                (click)="salir()">
+                          <mat-icon>exit_to_app</mat-icon>
+                          <span>{{ localStorageService.lenguaje.lan081 }}</span>
+                        </button>
+                    </mat-menu>
+                    <mat-menu #idioma="matMenu">
+                        <button mat-menu-item (click)="cambiarIdioma('es')">{{ localStorageService.lenguaje.lan289 }}</button>
+                        <button mat-menu-item (click)="cambiarIdioma('en')">{{ localStorageService.lenguaje.lan290 }}</button>
+                    </mat-menu>
+                </mat-toolbar-row>
+        </mat-toolbar>
+        <!--tOOLBAR-->
+        <!--Container de sidenav y content-->
+        <mat-drawer-container class="example-container">
+            <!--MENU LATERAL INTERNO LISTA DE VEHICULOS-->
+            <!-- definimos el ancho del sidenav mode=side -->
+            <mat-drawer #drawer mode="side" opened class="w-sidenav-responsive top-res">
+                <!--spinner-->
+                <div class="loading-shade" *ngIf="loaderVehiculos">
+                    <!--mat-spinner color="warn"></mat-spinner-->
+                    <div class="spinner">
+                        <div class="inner one"></div>
+                        <div class="inner two"></div>
+                        <div class="inner three"></div>
+                    </div>
+                </div>
+                <!--/spinner-->
+                <!--lista de vehiculos en monitoreo-->
+                <div *ngIf="viewVehiculos === true" class="h-full">
+                    <div class="container-fluid h-full">
+                        <div class="row mat-elevation-z3" style="height: 55px !important;">
+                            <div class="col-8">
+                                <!--Filtrar vehiculos-->
+                                <mat-form-field class="w-full" 
+                                                style="height:0px"
+                                                floatLabel="never">
+                                    <mat-label>{{ localStorageService.lenguaje.lan051 }} {{ cantidadVehiculos }} {{ localStorageService.lenguaje.lan095 | lowercase }}</mat-label>
+                                    <input matInput 
+                                            type="search"
+                                            [(ngModel)]="searchText"
+                                            (keyup)="keyPress()">
+                                    <button mat-button 
+                                            mat-icon-button 
+                                            matSuffix 
+                                            (click)="clearSearchField();keyPress()" 
+                                            *ngIf="searchText">
+                                        <mat-icon>close</mat-icon>
+                                    </button>
+                                </mat-form-field>
+                                <!--/Filtrar vehiculos-->
+                            </div>
+                            <div class="col-2 d-flex align-items-center justify-content-center">
+                                {{filteredCount.count}}/{{cantidadVehiculos}}
+                            </div>
+                            <div class="col-2 d-flex align-items-center justify-content-center">
+                                <button mat-icon-button 
+                                        color="warn"
+                                        [matTooltip]="localStorageService.lenguaje.lan095"
+                                        (click)="visibilidadVehiculos()"
+                                        >
+                                    <mat-icon>directions_car</mat-icon>
+                                    <span *ngIf="badgeVehiculo" class="mat-badge-no-material mat-badge-above-no-material mat-badge-after-no-material mat-badge-medium-no-material">
+                                        <span class="mat-badge-content-no-material mat-badge-active-no-material"></span>
+                                    </span>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="row h-full" style="margin-top: 0px;height: calc(100% - 55px) !important;">
+                            <div class="col h-full" style="padding-left: 0px;padding-right: 0px;">
+                                <cdk-virtual-scroll-viewport itemSize="72" style="height: 100% !important;">                                
+                                    <mat-selection-list #shoes [multiple]="false" class="h-full" role="navigation">
+                                        <mat-divider></mat-divider>
+                                        <ng-container *cdkVirtualFor="let vehiculo of this.vehiculos | filter : searchText:filteredCount">
+                                            <mat-list-option  *ngIf="vehiculo.visibilidad2 === 1 && this.loaderVehiculos === false"
+                                                            (click)="seguirA(vehiculo);cerrarSidenav(drawer)" 
+                                                            style="margin-bottom: 0;"
+                                                            class="paddinglr-10">
+                                                <mat-icon mat-list-icon 
+                                                        *ngIf="vehiculo.ign === 'off'" 
+                                                        style="color:red"
+                                                        [matTooltip]="localStorageService.lenguaje.lan276">
+                                                        power_settings_new
+                                                </mat-icon>
+                                                <mat-icon mat-list-icon 
+                                                        *ngIf="vehiculo.ign === 'on'" 
+                                                        style="color:green"
+                                                        [matTooltip]="localStorageService.lenguaje.lan277">
+                                                        power_settings_new
+                                                </mat-icon>
+                                                <div matLine  class="d-flex justify-content-between">
+                                                    <span>
+                                                        {{ vehiculo.nombre }}
+                                                    </span>
+                                                   
+                                                        
+                                                </div>
+                                                <mat-divider></mat-divider>
+                                            </mat-list-option> 
+                                        </ng-container>
+                                    </mat-selection-list>
+                                </cdk-virtual-scroll-viewport>                    
+                            </div>
+                        </div>
+                    </div>
+                    <button  mat-fab 
+                        color="warn"
+                        class="position-absolute p-rb z-index-1000"
+                        (click)="drawer.toggle();toggleIcon()"
+                        *ngIf="streetView === true"
+                        ><mat-icon>map</mat-icon>
+                    </button>
+                </div>
+                <!--/lista de vehiculos en monitoreo-->
+                <!--lista de eventos en vivo-->
+                <div *ngIf="viewLive === true && mapService.contenedorVehiculos === true" class="h-full">
+                    <!--cabecera detalle eventos en vivo-->
+                    <div class="card-header border-0 padding-0" style="height: 49px !important;">
+                        <mat-list style="padding-top: 0px;">
+                            <mat-divider></mat-divider>
+                            <mat-list-item class="bg-default-warn">
+                                <button mat-icon-button
+                                        (click)="atrasVerVehiculos()">
+                                        <mat-icon>chevron_left</mat-icon>
+                                </button>
+                                {{ nombreVehiculoSeleccionado }}
+                                <span class="flex-right"></span>
+                                <button mat-icon-button
+                                        [matTooltip]="localStorageService.lenguaje.lan126"
+                                        (click)="verViajes(nombreVehiculoSeleccionado)"
+                                        *ngIf="visibilidadViajeEscritorio">
+                                    <mat-icon>timeline</mat-icon>
+                                </button>
+                                <button mat-icon-button
+                                        [matTooltip]="localStorageService.lenguaje.lan120"
+                                        (click)="capturarImagenVehiculo()"
+                                        [disabled]="botonCamaraDesabilidato">
+                                    <mat-icon>add_a_photo</mat-icon>
+                                </button>
+                                <button mat-icon-button
+                                        [matTooltip]="localStorageService.lenguaje.lan099"
+                                        (click)="openSnackBar('vehiculo', 'OK')">
+                                    <mat-icon>my_location</mat-icon>
+                                </button>
+                            </mat-list-item>
+                        </mat-list>
+                    </div>
+                    <!--/cabecera detalle eventos en vivo-->
+                    <!--cuerpo de eventos en vivo-->
+                    <div class="card-body overflowAuto2 border-0 padding-0 overlay-y" style="height: calc(100% - 49px) !important;">
+                        <!--spinner-->
+                        <div class="loading-shade" *ngIf="loadText === true">
+                            <!--mat-spinner color="warn"></mat-spinner-->
+                            <div class="spinner">
+                                <div class="inner one"></div>
+                                <div class="inner two"></div>
+                                <div class="inner three"></div>
+                            </div>
+                        </div>
+                        <!--/spinner-->
+                        <cdk-virtual-scroll-viewport itemSize="26" class="example-viewport">
+                            <mat-list>
+                                <ng-container *cdkVirtualFor="let evento of detalleViaje" >
+                                    <mat-list-item  (click)="getRow(evento)" 
+                                                    class="mouse-hover"
+                                                    [ngStyle]="{'background': evento.background, 'color': evento.colorText, 'height': '46px'}">
+
+                                        <div mat-line class="d-flex justify-content-between" style="font-size: 14px !important;margin-bottom: -5px;">
+                                            <div> 
+                                                <strong>
+                                                    <span style="margin-right: 5px;color: #0000002e">{{ evento.evento }}</span>
+                                                </strong> 
+                                                <span style="font-weight: 500;">
+                                                    {{ evento.etiqueta }}
+                                                </span>
+                                            </div> 
+                                            <div>
+                                                <span style="font-weight: 300;">{{ evento.event_time | convertAmPm }}</span>
+                                            </div>
+                                            <!--componente iconos-->
+                                            <div *ngIf="evento.PS00">
+                                                <a  href="javascript:void(0)" 
+                                                    (click)="verFoto(evento)"
+                                                    matTooltip="Ver foto capturada">
+                                                    <mat-icon>photo_camera</mat-icon>
+                                                </a>
+                                            </div>
+
+                                            <div *ngIf="evento.PS01 !== '0'">
+                                                <a  href="javascript:void(0)" 
+                                                    (click)="verFotoDobleCamara(evento)"
+                                                    matTooltip="Ver fotos capturadas">
+                                                    <mat-icon>photo_camera</mat-icon>
+                                                </a>
+                                            </div>
+
+                                            <div *ngIf="evento.icono == 1">
+                                                <mat-icon
+                                                [matTooltip]="evento.nombre_icono"
+                                                [ngStyle]="{'color': evento.color_icono }">{{ evento.descripcion_icono }}</mat-icon>
+                                            </div>
+
+                                            <div *ngIf="evento.posicion_valida === 0">
+                                                <mat-icon style="color: red;"
+                                                matTooltip="Vehículo ha perdido posición">gps_off</mat-icon>
+                                            </div>
+                                            <!--/componente iconos-->  
+                                        </div>
+                                        <p  mat-line 
+                                            class="d-flex justify-content-between" 
+                                            style="font-size: 12px !important;">
+                                            <span class="truncar-direccion" [matTooltip]="evento.address">
+                                                {{ evento.address }}
+                                            </span>
+                                            <span style="font-weight: bold;">
+                                                {{ evento.vel | convertMiAKm }} km/h
+                                            </span> 
+                                        </p>
+                                        <mat-divider></mat-divider>
+                                    </mat-list-item>
+                                </ng-container>
+                            </mat-list>
+                        </cdk-virtual-scroll-viewport>
+                        
+                        <div *ngIf="boolEventoNoGenerado === true" class="d-flex justify-content-center">
+                            <div style="margin-top: 50%;">
+                                <p class="text-center"><mat-icon>query_builder</mat-icon></p>
+                                <p style="margin-bottom: 0px !important" class="text-center">{{ localStorageService.lenguaje.lan269 }}</p>
+                                <p class="text-center">{{ localStorageService.lenguaje.lan270 }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /cuerpo de eventos en vivo-->
+                    <button  mat-fab 
+                        color="warn"
+                        class="position-absolute p-rb z-index-1000"
+                        (click)="drawer.toggle();toggleIcon()"
+                        *ngIf="streetView === true"
+                        ><mat-icon>map</mat-icon>
+                    </button>
+                </div>
+                <!--/lista de eventos en vivo-->
+                <!--Contenido dinamico DetalleViajes-->
+                <ng-template style="overflow-y: hidden !important;" #detallesViajesContainer></ng-template>
+                <!--/Contenido dinamico DetalleViajes-->
+                <!-- fin de definicion del ancho del sidenav mode=side -->
+            </mat-drawer>
+            <!--/MENU LATERAL INTERNO LISTA DE VEHICULOS-->
+            <!--MAPA-->
+            <mat-drawer-content class="p-r-c21">
+                <!--Ampliar o disminuir mapa-->
+                <button  mat-mini-fab 
+                        color="warn"
+                        (click)="drawer.toggle();toggleIcon()"
+                        class="position-absolute p-lt z-index-1000"
+                        style="top: 35px;left: 10px;">
+                <mat-icon>{{ icon }}</mat-icon>
+                </button>
+                <!--/Ampliar o disminuir mapa-->
+                <!--boton guardar cambios geocercas-->
+                <button  mat-mini-fab
+                        *ngIf="viewSaveGeocerca === true" 
+                        color="warn"
+                        matTooltip="guardar cambios de geocerca"
+                        class="position-absolute p-lt2 z-index-1000"
+                        (click)="guardarEditadoGeocerca()">
+                        <mat-icon>save</mat-icon>
+                </button>
+                <!--/boton guardar cambios geocercas-->
+                <!--boton info vehiculo-->
+                <button  mat-mini-fab
+                        *ngIf="detalleVehiculo" 
+                        color="warn"
+                        [matTooltip]="localStorageService.lenguaje.lan294"
+                        class="position-absolute p-lt2 z-index-1000"
+                        style="left: 10px;top: 90px;"
+                        (click)="verDetalleVehiculoSeleccionado()">
+                        <mat-icon>info_outlined</mat-icon>
+                </button>
+                <!--/boton info vehiculo-->
+                <!--Menu layers mapa-->
+                <button  mat-mini-fab 
+                        color="warn"
+                        class="position-absolute p-rt  z-index-1000"
+                        [matTooltip]="localStorageService.lenguaje.lan100"
+                        [matMenuTriggerFor]="menuLayer"
+                        style="top: 35px !important;right: 10px !important;">
+                        <mat-icon>layers</mat-icon>
+                </button>
+                <!--/Menu layers mapa-->
+                <!--Ampliar o disminuir tabla-->
+                <!--Menu de configuracionde de mapa y geocercas-->
+                <mat-menu #menuLayer="matMenu">
+                    <button mat-menu-item (click)="cambiarLayer('roadmap')">
+                        <mat-icon>map</mat-icon>
+                        <span>{{ localStorageService.lenguaje.lan108 }}</span>
+                    </button>
+                    <button mat-menu-item (click)="cambiarLayer('traffic')">
+                        <mat-icon>traffic</mat-icon>
+                        <span>{{ localStorageService.lenguaje.lan109 }}</span>
+                    </button>
+                    <button mat-menu-item  (click)="cambiarLayer('terrain')">
+                        <mat-icon>terrain</mat-icon>
+                        <span>{{ localStorageService.lenguaje.lan110 }}</span>
+                    </button>
+                    <button mat-menu-item (click)="cambiarLayer('hybrid')">
+                        <mat-icon>satellite</mat-icon>
+                        <span>{{ localStorageService.lenguaje.lan271}}</span>
+                    </button>
+                    <button mat-menu-item (click)="cambiarLayer('leaflet')">
+                        <mat-icon>streetview</mat-icon>
+                        <span>{{ localStorageService.lenguaje.lan111 }}</span>
+                    </button>
+                    
+                </mat-menu>
+                <!--spinner carga geocerca-->
+                <div class="position-absolute z-index-1000"
+                    style="bottom: 10px;left: 10px; background: white; padding:5px; border-radius: 10px; border: 1px solid #ff5722; font-size: 12px;"
+                    *ngIf="geocercasCargadas == false">
+                    <div class="row">
+                        <div class="col-2">
+                            <mat-spinner color="warn" diameter="20"></mat-spinner>
+                        </div>
+                        <div class="col-10">
+                            <span style="color: #ff5722;" class="">Cargando geocercas ...</span>
+                        </div>
+                    </div>
+                     
+                </div>
+                <!--spinner carga geocerca-->
+                
+                <!--/Menu de configuracionde de mapa y geocercas-->
+                <div #map id="map"></div>
+            </mat-drawer-content>
+            <!--/MAPA-->
+        </mat-drawer-container>
+        <!--/Container de sidenav y content-->
+    </mat-drawer-content>
+    <!--CONTENIDO DE LA APP DE MAPA-->
+</mat-drawer-container>
+

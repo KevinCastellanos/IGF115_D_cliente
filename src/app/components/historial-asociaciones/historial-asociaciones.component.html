@@ -1,0 +1,31 @@
+<h5 mat-dialog-title class="text-center">{{data.titulo}}</h5>
+<div mat-dialog-content>
+    <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">imei</th>
+            <th scope="col">Vehículo</th>
+            <th scope="col">Fecha</th>
+            <th scope="col">Tipo de asociación</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let element of data.data">
+            <th> {{ element.imei }} </th>
+            <td> {{ element.nombre_vehiculo }} </td>
+            <td> {{ element.fecha | convertUtcToLocalTime}} </td>
+            <td> 
+                <span *ngIf="element.asociacion === 1">
+                    Asociado
+                </span>
+                <span *ngIf="element.asociacion === 0">
+                    Desasociado
+                </span> 
+            </td>
+          </tr>
+        </tbody>
+      </table>
+</div>
+<div mat-dialog-actions class="d-flex justify-content-end">
+    <button mat-button [mat-dialog-close]="data.body" cdkFocusInitial>Ok</button>
+</div>

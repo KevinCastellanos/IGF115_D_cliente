@@ -1,0 +1,219 @@
+<h6 mat-dialog-title class="text-center">Editar telefonos</h6>
+<div mat-dialog-content>
+    <span class="text-muted"><i> Nota: Estos números de teléfonos estan asociados a notificaciones por telegram.</i></span>
+    <div class="row">
+        <div class="col-8">
+            <form class="profile" [formGroup]="profileForm">
+                <div formGroupName="phone">
+                    <mat-form-field style="width: 30%;" appearance="standard" class="phone_country">
+                        <mat-label>País</mat-label>
+                        <mat-select formControlName="country" (selectionChange)="formatNumber()">
+                            <mat-option *ngFor="let countryCode of countyCodes" [value]="countryCode.code">
+                                {{countryCode.country}}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                    <mat-form-field style="width: 69%;margin-left: 1%;" appearance="standard" class="phone_number">
+                        <mat-label>Teléfono</mat-label>
+                        <input formControlName="number"
+                               type="tel"
+                               placeholder=""
+                               (input)="formatNumber()"
+                               [errorStateMatcher]="phoneErrorMatcher"
+                               matInput>
+                        <mat-error *ngIf="!phoneGroup.valid">
+                            Error, formato válido: {{ phoneHint }}
+                        </mat-error>
+                        <mat-hint>Ejemplo: {{ phoneHint }}</mat-hint>
+                    </mat-form-field>
+                </div>
+            </form>
+        </div>
+        <div class="col-4 d-flex align-items-center justify-content-end">
+            <button mat-raised-button 
+                    [disabled]="!(phoneGroup.value.number !== '')"
+                    (click)="eliminarTelefono(obtenerNunmero(),this.profileForm.get('phone'))">
+                eliminar
+            </button>
+            <button mat-raised-button 
+                    color="warn" 
+                    style="margin-left: 10px;" 
+                    [disabled]="!phoneGroup.valid || !(phoneGroup.value.number !== '')"
+                    (click)="actualizarTelefono(obtenerNunmero(),this.profileForm.get('phone'))">
+                actualizar
+            </button>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-8">
+            <form class="profile" [formGroup]="profileForm2">
+                <div formGroupName="phone">
+                    <mat-form-field style="width: 30%;" appearance="standard" class="phone_country">
+                        <mat-label>País</mat-label>
+                        <mat-select formControlName="country" (selectionChange)="formatNumber2()">
+                            <mat-option *ngFor="let countryCode of countyCodes2" [value]="countryCode.code">
+                                {{countryCode.country}}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                    <mat-form-field style="width: 69%;margin-left: 1%;" appearance="standard" class="phone_number">
+                        <mat-label>Teléfono</mat-label>
+                        <input formControlName="number"
+                               type="tel"
+                               placeholder=""
+                               (input)="formatNumber2()"
+                               [errorStateMatcher]="phoneErrorMatcher2"
+                               matInput>
+                        <mat-error *ngIf="!phoneGroup2.valid">
+                            Error, formato válido: {{ phoneHint2 }}
+                        </mat-error>
+                        <mat-hint>Ejemplo: {{ phoneHint2 }}</mat-hint>
+                    </mat-form-field>
+                </div>
+            </form>
+        </div>
+        <div class="col-4 d-flex align-items-center justify-content-end">
+            <button mat-raised-button 
+                    [disabled]="!(phoneGroup2.value.number !== '')"
+                    (click)="eliminarTelefono(obtenerNunmero2(),this.profileForm2.get('phone'))">
+                eliminar
+            </button>
+            <button mat-raised-button 
+                    color="warn" 
+                    style="margin-left: 10px;" 
+                    [disabled]="!phoneGroup2.valid || !(phoneGroup2.value.number !== '')"
+                    (click)="actualizarTelefono(obtenerNunmero2(),this.profileForm2.get('phone'))">
+                actualizar
+            </button>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-8">
+            <form class="profile" [formGroup]="profileForm3">
+                <div formGroupName="phone">
+                    <mat-form-field style="width: 30%;" appearance="standard" class="phone_country">
+                        <mat-label>País</mat-label>
+                        <mat-select formControlName="country" (selectionChange)="formatNumber3()">
+                            <mat-option *ngFor="let countryCode of countyCodes3" [value]="countryCode.code">
+                                {{countryCode.country}}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                    <mat-form-field style="width: 69%;margin-left: 1%;" appearance="standard" class="phone_number">
+                        <mat-label>Teléfono</mat-label>
+                        <input formControlName="number"
+                               type="tel"
+                               placeholder=""
+                               (input)="formatNumber3()"
+                               [errorStateMatcher]="phoneErrorMatcher3"
+                               matInput>
+                        <mat-error *ngIf="!phoneGroup3.valid">
+                            Error, formato válido: {{ phoneHint3 }}
+                        </mat-error>
+                        <mat-hint>Ejemplo: {{ phoneHint3 }}</mat-hint>
+                    </mat-form-field>
+                </div>
+            </form>
+        </div>
+        <div class="col-4 d-flex align-items-center justify-content-end">
+            <button mat-raised-button 
+                    [disabled]="!(phoneGroup3.value.number !== '')"
+                    (click)="eliminarTelefono(obtenerNunmero3(),this.profileForm3.get('phone'))">
+                eliminar
+            </button>
+            <button mat-raised-button 
+                    color="warn" 
+                    style="margin-left: 10px;" 
+                    [disabled]="!phoneGroup3.valid || !(phoneGroup3.value.number !== '')"
+                    (click)="actualizarTelefono(obtenerNunmero3(),this.profileForm3.get('phone'))">
+                actualizar
+            </button>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-8">
+            <form class="profile" [formGroup]="profileForm4">
+                <div formGroupName="phone">
+                    <mat-form-field style="width: 30%;" appearance="standard" class="phone_country">
+                        <mat-label>País</mat-label>
+                        <mat-select formControlName="country" (selectionChange)="formatNumber4()">
+                            <mat-option *ngFor="let countryCode of countyCodes4" [value]="countryCode.code">
+                                {{countryCode.country}}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                    <mat-form-field style="width: 69%;margin-left: 1%;" appearance="standard" class="phone_number">
+                        <mat-label>Teléfono</mat-label>
+                        <input formControlName="number"
+                               type="tel"
+                               placeholder=""
+                               (input)="formatNumber4()"
+                               [errorStateMatcher]="phoneErrorMatcher3"
+                               matInput>
+                        <mat-error *ngIf="!phoneGroup4.valid">
+                            Error, formato válido: {{ phoneHint4 }}
+                        </mat-error>
+                        <mat-hint>Ejemplo: {{ phoneHint4 }}</mat-hint>
+                    </mat-form-field>
+                </div>
+            </form>
+        </div>
+        <div class="col-4 d-flex align-items-center justify-content-end">
+            <button mat-raised-button 
+                    [disabled]="!(phoneGroup4.value.number !== '')"
+                    (click)="eliminarTelefono(obtenerNunmero4(),this.profileForm4.get('phone'))">
+                eliminar
+            </button>
+            <button mat-raised-button 
+                    color="warn" 
+                    style="margin-left: 10px;" 
+                    [disabled]="!phoneGroup4.valid || !(phoneGroup4.value.number !== '')"
+                    (click)="actualizarTelefono(obtenerNunmero4(),this.profileForm4.get('phone'))">
+                actualizar
+            </button>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-8">
+            <form class="profile" [formGroup]="profileForm5">
+                <div formGroupName="phone">
+                    <mat-form-field style="width: 30%;" appearance="standard" class="phone_country">
+                        <mat-label>País</mat-label>
+                        <mat-select formControlName="country" (selectionChange)="formatNumber5()">
+                            <mat-option *ngFor="let countryCode of countyCodes5" [value]="countryCode.code">
+                                {{countryCode.country}}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                    <mat-form-field style="width: 69%;margin-left: 1%;" appearance="standard" class="phone_number">
+                        <mat-label>Teléfono</mat-label>
+                        <input formControlName="number"
+                               type="tel"
+                               placeholder=""
+                               (input)="formatNumber5()"
+                               [errorStateMatcher]="phoneErrorMatcher5"
+                               matInput>
+                        <mat-error *ngIf="!phoneGroup5.valid">
+                            Error, formato válido: {{ phoneHint5 }}
+                        </mat-error>
+                        <mat-hint>Ejemplo: {{ phoneHint5 }}</mat-hint>
+                    </mat-form-field>
+                </div>
+            </form>
+        </div>
+        <div class="col-4 d-flex align-items-center justify-content-end">
+            <button mat-raised-button 
+                    [disabled]="!(phoneGroup5.value.number !== '')"
+                    (click)="eliminarTelefono(obtenerNunmero5(),this.profileForm5.get('phone'))">
+                eliminar
+            </button>
+            <button mat-raised-button 
+                    color="warn" 
+                    style="margin-left: 10px;" 
+                    [disabled]="!phoneGroup5.valid || !(phoneGroup5.value.number !== '')"
+                    (click)="actualizarTelefono(obtenerNunmero5(),this.profileForm5.get('phone'))">
+                actualizar
+            </button>
+        </div>
+    </div>
+</div>

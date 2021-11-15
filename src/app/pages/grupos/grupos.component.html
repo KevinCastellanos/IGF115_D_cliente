@@ -1,0 +1,829 @@
+<mat-drawer-container class="example-container2" hasBackdrop="true">
+    <!--Menu lateral-->
+    <mat-drawer #drawer2 mode="over">
+        <!-- definimos el ancho del sidenav mode=OVER -->
+        <div class="W-300">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col p-0">
+                        <mat-toolbar-row>
+                            <h5>Módulos</h5>
+                            <span class="flex-right"></span>
+                            <button mat-icon-button
+                                    color="primary"
+                                    (click)="drawer2.toggle()">
+                                    <mat-icon>close</mat-icon>
+                            </button>
+                        </mat-toolbar-row>
+                        <mat-nav-list>
+                            <mat-divider></mat-divider>
+                            <a  mat-list-item 
+                                routerLink="/principal"> 
+                                <mat-icon mat-list-icon class="s-r-5">
+                                    home
+                                </mat-icon>
+                                Inicio
+                            </a>
+                            <mat-divider></mat-divider>
+                            <div *ngFor="let modulo of modulos">
+                                <a  *ngIf="modulo.id_modulo !== 16"
+                                    routerLinkActive="active-link"
+                                    mat-list-item [routerLink]="['/'+modulo.enrutador]"> 
+                                    <mat-icon mat-list-icon class="s-r-5">
+                                        {{ modulo.icono }}
+                                    </mat-icon>
+                                    {{ modulo.nombre | traductor }}
+                                    <mat-divider></mat-divider>
+                                </a>
+                                <a  *ngIf="modulo.id_modulo === 16"
+                                    routerLinkActive="active-link"
+                                    mat-list-item 
+                                    [href]="modulo.enrutador + 'user=' + localStorageService.usuario.usuario.usuario + '&pass=' + localStorageService.usuario.usuario.password"> 
+                                    <mat-icon mat-list-icon class="s-r-5">
+                                        {{ modulo.icono }}
+                                    </mat-icon>
+                                    {{ modulo.nombre | traductor }}
+                                    <mat-divider></mat-divider>
+                                </a>
+                            </div>
+                        </mat-nav-list>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- fin de definicion del ancho del sidenav mode=OVER -->
+    </mat-drawer>
+    <!--/Menu lateral-->
+    <!--CONTENIDO DE LA APP-->
+    <mat-drawer-content class="p-r-c">
+        <!--TOOLBAR-->
+        <mat-toolbar color="warn" class="fixed-top">
+                <mat-toolbar-row>
+                    <button mat-icon-button (click)="drawer2.toggle()">
+                            <mat-icon>menu</mat-icon>
+                    </button>
+                    <span style="margin-left: 5px">Gestion de usuarios</span>
+                    <button mat-icon-button routerLink="/principal"
+                            matTooltip="Menu principal"> 
+                        <mat-icon mat-list-icon>
+                            home
+                        </mat-icon>
+                    </button>
+                    <span class="flex-right"></span>
+                    <sup *ngIf="localStorageService.usuario.usuario.root ===1" style="margin-right: 20px;">
+                        [{{ localStorageService.usuario.usuario.servidor }}]
+                    </sup>
+                    <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Example icon-button with a menu">
+                        <mat-icon>more_vert</mat-icon>
+                    </button>
+                    <mat-menu #menu="matMenu">
+                        <button mat-menu-item>
+                          <mat-icon>person</mat-icon>
+                          <span>{{ localStorageService.usuario.usuario.nombre }} {{ localStorageService.usuario.usuario.apellido }}</span>
+                        </button>
+                        <button mat-menu-item disabled>
+                          <mat-icon>settings_applications</mat-icon>
+                          <span>Configuración</span>
+                        </button>
+                        <button mat-menu-item
+                                (click)="salir()">
+                          <mat-icon>exit_to_app</mat-icon>
+                          <span>Salir</span>
+                        </button>
+                    </mat-menu>
+                </mat-toolbar-row>
+        </mat-toolbar>
+        <!--tOOLBAR-->
+        <!--Container de sidenav y content de mapa-->
+        <mat-drawer-container class="example-container">
+            <div class="container-fluid h-full">
+                <div class="row h-full">
+                    <div class="col h-full">
+                        <mat-tab-group mat-stretch-tabs color="warn">
+                            <!--Grupos-->
+                            <mat-tab>
+                                <ng-template mat-tab-label>
+                                    <mat-icon class="example-tab-icon">group_work</mat-icon>
+                                    Grupos
+                                </ng-template>
+                                <mat-card>
+                                    <div class="row">
+                                        <!--tabla de grupos-->
+                                        <div class="col-8">
+                                            <!--buscador de Grupos-->
+                                            <mat-form-field>
+                                                <mat-icon matSuffix>search</mat-icon>
+                                                <input matInput (keyup)="applyFilterGrupos($event.target.value)" placeholder="Buscar">
+                                            </mat-form-field>
+                                            <!--Buscador de grupos-->
+                                            <!--Tabla-->
+                                            <div class="example-container1 mat-elevation-z8">
+                                                <div class="example-loading-shade"
+                                                    *ngIf="isLoadingResults">
+                                                    <mat-spinner *ngIf="isLoadingResults"></mat-spinner>
+                                                </div>
+                                                <div class="example-table-container">
+                                                    <table mat-table [dataSource]="dataSource">
+
+                                                            <!-- modelo Column -->
+                                                            <ng-container matColumnDef="nombre_compania">
+                                                                <th mat-header-cell *matHeaderCellDef> Compañia </th>
+                                                                <td mat-cell *matCellDef="let element"> {{element.nombre_compania}} </td>
+                                                            </ng-container>    
+                                                            
+                                                            <!-- modelo Column -->
+                                                            <ng-container matColumnDef="nombre_grupo">
+                                                                <th mat-header-cell *matHeaderCellDef> Grupo </th>
+                                                                <td mat-cell *matCellDef="let element"> {{element.nombre_grupo}} </td>
+                                                            </ng-container>
+
+                                                            <!-- modelo Column -->
+                                                            <ng-container matColumnDef="direccion_1">
+                                                                <th mat-header-cell *matHeaderCellDef> Dirección </th>
+                                                                <td mat-cell *matCellDef="let element"> {{element.direccion_1}} </td>
+                                                            </ng-container>
+
+                                                            <!-- fw Column -->
+                                                            <ng-container matColumnDef="cantidad_vehiculo">
+                                                                <th mat-header-cell *matHeaderCellDef> Cantidad vehiculos </th>
+                                                                <td mat-cell *matCellDef="let element"> {{element.cantidad_vehiculo}} </td>
+                                                            </ng-container>
+
+                                                            <!-- id_grupo Column -->
+                                                            <ng-container matColumnDef="id_grupo">
+                                                                <th mat-header-cell *matHeaderCellDef> Gestión</th>
+                                                                <td mat-cell *matCellDef="let element">
+                                                                    <a href="javascript: void(0)" (click)="dialogEditarGrupo(element)">Editar</a>
+                                                                    <!--<a href="javascript: void(0)" style="color:red">Eliminar</a>-->
+                                                                </td>
+                                                            </ng-container>
+
+                                                            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                                                            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+                                                    </table>
+                                                    <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
+                                                </div>
+                                            </div>
+                                            <!--/Tabla-->
+                                        </div>
+                                        <!--/Tabla de grupos-->
+                                        <!--Registro de grupos-->
+                                        <div class="col-4">
+                                            <h5 class="text-center">Registrar Grupo</h5>
+                                            <mat-form-field class="w-full">
+                                                <mat-label>Nombre de Compañia</mat-label>
+                                                <input  matInput
+                                                        type="text"
+                                                        name="nombreCompania"
+                                                        [(ngModel)]="nombreCompania"
+                                                        id="nombreCompania">
+                                            </mat-form-field>
+                                            <mat-form-field class="w-full">
+                                                <mat-label>Nombre de grupo</mat-label>
+                                                <input  matInput
+                                                        type="text"
+                                                        name="nombreGrupo"
+                                                        [(ngModel)]="nombreGrupo"
+                                                        id="nombreGrupo">
+                                            </mat-form-field>
+                                            <mat-form-field class="w-full">
+                                                <mat-label>Dirección</mat-label>
+                                                <input  matInput
+                                                        type="text"
+                                                        name="direccion"
+                                                        [(ngModel)]="direccion"
+                                                        id="direccion">
+                                            </mat-form-field>
+                                            <!--boton validado-->
+                                            <button mat-raised-button
+                                                    color="warn"
+                                                    (click)="crearGrupo()"
+                                                    class="w-full"
+                                                    [disabled]="visible === 1">
+                                                    <mat-icon *ngIf="visible === 1">
+                                                        <mat-spinner  color="accent" diameter="20">
+                                                        </mat-spinner>
+                                                    </mat-icon>
+                                                    <span *ngIf="visible === 0">
+                                                        Crear grupo
+                                                    </span> 
+                                            </button>
+                                            <!--boton validado-->
+                                        </div>
+                                        <!--Registro de grupos-->
+                                    </div>
+                                </mat-card>
+                                <br>
+                            </mat-tab>
+                            <!--/Grupos-->
+                            <!--Usuario-->
+                            <mat-tab>
+                                <ng-template mat-tab-label>
+                                    <mat-icon class="example-tab-icon">group</mat-icon>
+                                    Usuarios
+                                </ng-template>
+                                <div class="container-fluid">
+                                    <div class="row">
+                                        <div class="col-8">
+                                            <!--buscador de usuario-->
+                                            <mat-form-field>
+                                                <mat-icon matSuffix>search</mat-icon>
+                                                <input matInput (keyup)="applyFilterUsuarios($event.target.value)" placeholder="Buscar">
+                                            </mat-form-field>
+                                            <!--Buscador de usuario-->
+                                            <!--Tabla-->
+                                            <div class="example-container1 mat-elevation-z1">
+                                                <div class="example-loading-shade"
+                                                    *ngIf="isLoadingResultsUser">
+                                                    <mat-spinner *ngIf="isLoadingResultsUser"></mat-spinner>
+                                                </div>
+                                                <div class="example-table-container">
+                                                    <table mat-table [dataSource]="dataSourceUser">
+                                                        <!-- nombre Column -->
+                                                        <ng-container matColumnDef="nombre_grupo">
+                                                            <th mat-header-cell *matHeaderCellDef>Grupo</th>
+                                                            <td mat-cell *matCellDef="let element"> {{element.nombre_grupo}} </td>
+                                                        </ng-container>
+
+                                                        <!-- placa Column -->
+                                                        <ng-container matColumnDef="nombre">
+                                                            <th mat-header-cell *matHeaderCellDef>Nombre</th>
+                                                            <td mat-cell *matCellDef="let element"> {{element.nombre}} </td>
+                                                        </ng-container>
+
+                                                        <!-- marca Column -->
+                                                        <ng-container matColumnDef="usuario">
+                                                            <th mat-header-cell *matHeaderCellDef> Usuario</th>
+                                                            <td mat-cell *matCellDef="let element">{{element.usuario}}</td>
+                                                        </ng-container>
+
+                                                        <ng-container matColumnDef="email">
+                                                            <th mat-header-cell *matHeaderCellDef> Correo</th>
+                                                            <td mat-cell *matCellDef="let element">{{element.email}}</td>
+                                                        </ng-container>
+
+                                                        <ng-container matColumnDef="password">
+                                                            <th mat-header-cell *matHeaderCellDef> Contraseña</th>
+                                                            <td mat-cell *matCellDef="let element">{{element.password}}</td>
+                                                        </ng-container>
+
+                                                        <!-- id_grupo Column -->
+                                                        <ng-container matColumnDef="id_usuario">
+                                                            <th mat-header-cell *matHeaderCellDef> Gestión</th>
+                                                            <td mat-cell *matCellDef="let element">
+                                                                <a href="javascript: void(0)" (click)="dialogEditarUsuario(element)">Editar</a> | 
+                                                                <a href="javascript: void(0)" (click)="eliminarUsuario(element)" style="color:red">Eliminar</a>
+                                                            </td>
+                                                        </ng-container>
+
+                                                        <ng-container matColumnDef="status">
+                                                            <th mat-header-cell *matHeaderCellDef>Estado</th>
+                                                            <td mat-cell *matCellDef="let element">
+                                                                <mat-slide-toggle [checked]="element.status" color="warn" (change)="cambiarStatusUsuario($event, element)">
+                                                                    <span *ngIf="element.status">
+                                                                        Activado
+                                                                    </span>
+                                                                    <span *ngIf="element.status === false">
+                                                                        Desactivado
+                                                                    </span>
+                                                                </mat-slide-toggle>
+                                                            </td>
+                                                        </ng-container>
+
+                                                        <tr mat-header-row *matHeaderRowDef="displayedColumnsUser"></tr>
+                                                        <tr mat-row *matRowDef="let row; columns: displayedColumnsUser;"></tr>
+                                                    </table>
+                                                    <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons #pagUser></mat-paginator>
+                                                </div>
+                                            </div>
+                                            <!--/Tabla-->
+                                        </div>
+                                        <div class="col-4">
+                                            <br>
+                                            <mat-card>
+                                                <mat-card-title>Registrar usuario</mat-card-title>
+                                                <div class="row">
+                                                    <div class="col">
+                                                        <mat-form-field class="w-full">
+                                                            <mat-label>Nombre</mat-label>
+                                                            <input  matInput
+                                                                    type="text"
+                                                                    name="nombreUsuario"
+                                                                    [(ngModel)]="usuario.nombre"
+                                                                    id="nombreUsuario">
+                                                        </mat-form-field>
+                                                        <mat-form-field class="w-full">
+                                                            <mat-label>Apellido</mat-label>
+                                                            <input  matInput
+                                                                    type="text"
+                                                                    name="apellido"
+                                                                    [(ngModel)]="usuario.apellido"
+                                                                    id="apellido">
+                                                        </mat-form-field>
+                                                        <mat-form-field class="w-full">
+                                                            <mat-label>Correo Electrónico</mat-label>
+                                                            <input  matInput
+                                                                    type="email"
+                                                                    name="email"
+                                                                    [(ngModel)]="usuario.email"
+                                                                    id="email">
+                                                        </mat-form-field>
+
+                                                    </div>
+                                                    <div class="col">
+                                                        <mat-form-field class="w-full">
+                                                            <mat-label>Nombre de Usuario</mat-label>
+                                                            <input  matInput
+                                                                    type="text"
+                                                                    name="usuario"
+                                                                    [(ngModel)]="usuario.usuario"
+                                                                    id="usuario">
+                                                        </mat-form-field>
+                                                        <mat-form-field class="w-full">
+                                                            <mat-label>Contraseña</mat-label>
+                                                            <input  matInput
+                                                                    type="text"
+                                                                    name="contra"
+                                                                    [(ngModel)]="usuario.password"
+                                                                    id="contra">
+                                                        </mat-form-field>
+
+                                                        <mat-form-field>
+                                                            <mat-select [formControl]="bankCtrlGrupos" 
+                                                                        placeholder="Grupos" 
+                                                                        #singleSelectGrupos>
+                                                                <mat-option>
+                                                                    <ngx-mat-select-search [formControl]="bankFilterCtrlGrupos"></ngx-mat-select-search>
+                                                                </mat-option>
+                                                                <mat-option *ngFor="let grupo of filteredBanksGrupos | async" [value]="grupo">
+                                                                    {{ grupo.nombre_grupo }}
+                                                                </mat-option>
+                                                            </mat-select>
+                                                        </mat-form-field>
+                                                        <!--/lista grupos filtro de busqueda-->
+                                                    </div>
+                                                </div>
+                                                <form class="profile" [formGroup]="profileForm">
+                                                    <div formGroupName="phone">
+                                                        <mat-form-field style="width: 30%;" appearance="standard" class="phone_country">
+                                                            <mat-label>País</mat-label>
+                                                            <mat-select formControlName="country" (selectionChange)="formatNumber()">
+                                                                <mat-option *ngFor="let countryCode of countyCodes" [value]="countryCode.code">
+                                                                    {{countryCode.country}}
+                                                                </mat-option>
+                                                            </mat-select>
+                                                        </mat-form-field>
+                                                        <mat-form-field style="width: 69%;margin-left: 1%;" appearance="standard" class="phone_number">
+                                                            <mat-label>Teléfono</mat-label>
+                                                            <input formControlName="number"
+                                                                   type="tel"
+                                                                   placeholder=""
+                                                                   (input)="formatNumber()"
+                                                                   [errorStateMatcher]="phoneErrorMatcher"
+                                                                   matInput>
+                                                            <mat-error *ngIf="!phoneGroup.valid">
+                                                                Error, formato válido: {{ phoneHint }}
+                                                            </mat-error>
+                                                            <mat-hint>Ejemplo: {{ phoneHint }}</mat-hint>
+                                                        </mat-form-field>
+                                                    </div>
+                                                </form>
+                                                <!--p class="json-output"><code>PhoneNumber('{{phoneNumberDigits}}', '{{phoneCountryControl.value}}
+                                                    ').toJSON()</code></p>
+                                                <pre>{{phoneNumber | json}}</pre-->
+                                                <br><br>
+                                                <div class="row">
+                                                    <div class="col">
+                                                        <!--Boton Validado-->
+                                                        <button mat-raised-button
+                                                                color="warn"
+                                                                class="w-full"
+                                                                (click)="crearUsuario()"
+                                                                [disabled]="visibleUser === 1 || !phoneGroup.valid">
+                                                            <mat-icon *ngIf="visibleUser === 1">
+                                                                <mat-spinner  color="accent" diameter="20">
+                                                                </mat-spinner>
+                                                            </mat-icon>
+                                                            <span *ngIf="visibleUser === 0">
+                                                                Crear usuario
+                                                            </span>
+                                                        </button>
+                                                        <!--/Boton Validado-->
+                                                    </div>
+                                                </div>
+                                            </mat-card>
+                                        </div>
+                                    </div>
+                                </div>
+                                <br>
+                            </mat-tab>
+                            <!--/Usuario-->
+                            <!--Asignacion de modulos a usuarios-->
+                            <mat-tab>
+                                <ng-template mat-tab-label>
+                                    <mat-icon class="example-tab-icon">edit_attributes</mat-icon>
+                                    Asignación de modulos
+                                </ng-template>
+                                <mat-card>
+                                    <div class="row">
+                                        <div class="col-12 col-md-3"></div>
+                                        <div class="col-12 col-md-6">
+                                            <h6 class="text-center">Seleccione un usuario</h6>
+                                            <!--mat-form-field class="w-full">
+                                                <mat-label>Usuarios</mat-label>
+                                                <mat-select [(value)]="grupoSeleccionado"
+                                                            (selectionChange)="seleccionUsuario($event)">
+                                                    <mat-option value="" selected>None</mat-option>
+                                                    <ng-container *ngFor="let ob of dataSourceUser.data">
+                                                        <mat-option  [value]="ob" >{{ ob.usuario }}</mat-option>
+                                                    </ng-container>
+                                                </mat-select>
+                                            </mat-form-field-->
+                                            <mat-form-field>
+                                                <mat-select [formControl]="bankCtrlUsuarios" 
+                                                            placeholder="Usuarios" 
+                                                            #singleSelectUsuarios
+                                                            (selectionChange)="seleccionUsuario($event)">
+                                                    <mat-option>
+                                                        <ngx-mat-select-search [formControl]="bankFilterCtrlUsuarios"></ngx-mat-select-search>
+                                                    </mat-option>
+                                                    <mat-option *ngFor="let usuario of filteredBanksUsuarios | async" [value]="usuario">
+                                                        {{ usuario.usuario }}
+                                                    </mat-option>
+                                                </mat-select>
+                                            </mat-form-field>
+                                            <h6 class="text-center">Módulos</h6>
+                                            <p class="text-center"> 
+                                                Controles de Encendido/apagado, puede gestionarlo con un Click sobre el slide-toggle 
+                                                o sobre el nombre para asignarle o quitarle modulos a usuarios.
+                                                Los modulos en <span style="color: red;"> color rojo </span> significa que son modulos administrativo del master.
+                                                <strong>Al momento de Encender/Apagar módulo, quedan los datos actualizados </strong>
+                                            </p>
+                                            <div class="alert alert-warning" role="alert">
+                                                El orden de los módulos se los mostrará en el acceso segun el orden de selección
+                                                que se ejecute.
+                                            </div>
+                                            <mat-list [hidden]="usuarioActivado ===  true">
+                                                <mat-list-item *ngFor="let mod of modulos">
+                                                    <mat-slide-toggle
+                                                        class=""
+                                                        color="warn"
+                                                        [checked]="mod.activo"
+                                                        (change)="cambiarEstatusModulo(mod, $event)"
+                                                        style="width: 100% !important;">
+                                                        <span style="color: red; width: 100% !important;" *ngIf="mod.administrador === 1">
+                                                            {{mod.nombre}} <span style="float:right">{{ mod.des }}{{ mod.orden }}</span> 
+                                                        </span>
+                                                        <span style="width: 100% !important;" *ngIf="mod.administrador === 0">
+                                                            {{mod.nombre}} <span style="float:right">{{ mod.des }}{{ mod.orden }}</span> 
+                                                        </span>
+                                                    </mat-slide-toggle>
+                                                    <mat-divider></mat-divider>
+                                                </mat-list-item>
+                                            </mat-list>
+                                        </div>
+                                        <div class="col-12 col-md-3"></div>
+                                    </div>
+                                </mat-card>
+                                <br>
+                            </mat-tab>
+                            <!--/Asignacion de modulos a usuarios-->
+                            <!--asignacion de vehiculos a grupos-->
+                            <mat-tab>
+                                <ng-template mat-tab-label>
+                                    <mat-icon class="example-tab-icon">dashboard</mat-icon>
+                                    Asignación de vehículos a grupos
+                                </ng-template>
+                                <mat-card>
+                                    <div class="row d-flex justify-content-center">
+                                        <div class="col col-md-4">
+                                            <h6 class="text-center">Seleccione un grupo</h6>
+                                            <!--lista grupos con filtro de busqueda-->
+                                            <mat-form-field>
+                                                <mat-select [formControl]="bankCtrlGrupos2" 
+                                                            placeholder="Grupos" 
+                                                            #singleSelectGrupos2
+                                                            (selectionChange)="seleccionUsuarioVehiculos($event)">
+                                                    <mat-option>
+                                                        <ngx-mat-select-search [formControl]="bankFilterCtrlGrupos2"></ngx-mat-select-search>
+                                                    </mat-option>
+                                                    <mat-option *ngFor="let grupo of filteredBanksGrupos2 | async" [value]="grupo">
+                                                        {{ grupo.nombre_grupo }}
+                                                    </mat-option>
+                                                </mat-select>
+                                            </mat-form-field>
+                                            <!--/lista grupos filtro de busqueda-->
+                                            <p class="text-center">Cambiar estado de asignación haciendo doble click en un item</p>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col">
+                                            <mat-progress-bar mode="buffer" *ngIf="spinnerDrop1 == 1"></mat-progress-bar>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col d-flex justify-content-center">
+                                            <div cdkDropListGroup>
+                                                
+                                                <div class="example-container-drag">
+                                                  <h6 class="text-center">No Asignados</h6>
+                                                  <!--Filtrar vehiculos-->
+                                                  <mat-form-field class="w-full"                 
+                                                                  floatLabel="never">
+                                                      <mat-icon matSuffix>search</mat-icon>
+                                                      <mat-label>Buscar vehículos</mat-label>
+                                                      <input matInput type="search"
+                                                              [(ngModel)]="searchText">
+                                                  </mat-form-field>
+                                                  <!--/Filtrar vehiculos--> 
+                                                  <div
+                                                    cdkDropList
+                                                    #todoList="cdkDropList"
+                                                    [cdkDropListData]="todo"
+                                                    class="example-list"
+                                                    (cdkDropListDropped)="drop($event)">
+                                                    <div class="example-box" *ngFor="let item of todo | filterDrag : searchText" cdkDrag (dblclick)="dblclickMove(item, 'done', 'todo')">
+                                                        {{ item }}
+                                                        <mat-icon>keyboard_arrow_right</mat-icon>
+                                                    </div>
+                                                  </div>
+                                                </div>
+                                                <div class="example-container-drag">
+                                                    <h6 class="text-center">Asignados</h6>
+                                                    <!--Filtrar vehiculos-->
+                                                  <mat-form-field class="w-full"                 
+                                                                  floatLabel="never">
+                                                      <mat-icon matSuffix>search</mat-icon>
+                                                      <mat-label>Buscar vehículos</mat-label>
+                                                      <input matInput type="search"
+                                                              [(ngModel)]="searchText3">
+                                                  </mat-form-field>
+                                                  <!--/Filtrar vehiculos--> 
+                                                    <div
+                                                        cdkDropList
+                                                        #doneList="cdkDropList"
+                                                        [cdkDropListData]="done"
+                                                        class="example-list"
+                                                        (cdkDropListDropped)="drop($event)"
+                                                        >
+                                                        <div class="example-box" *ngFor="let item of done | filterDrag : searchText3" cdkDrag (dblclick)="dblclickMove(item, 'todo', 'done')">
+                                                            <mat-icon>keyboard_arrow_left</mat-icon>
+                                                            {{item}}
+                                                            
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>                                              
+                                        </div>
+                                    </div>
+                                </mat-card>
+                                <br>
+                            </mat-tab>
+                            <!--/Asignación de vehiculos a grupos-->
+                            <!--asignacion de grupos a usuarios-->
+                            <mat-tab>
+                                <ng-template mat-tab-label>
+                                    <mat-icon class="example-tab-icon">dashboard</mat-icon>
+                                    Asignación de grupos a usuario
+                                </ng-template>
+                                <mat-card>
+                                    <div class="row d-flex justify-content-center">
+                                        <div class="col col-md-4">
+                                            <h6 class="text-center">Seleccione un usuario</h6>
+                                            <mat-form-field>
+                                            <mat-select [formControl]="bankCtrlUsuarios2" 
+                                                            placeholder="Usuarios" 
+                                                            #singleSelectUsuarios2
+                                                            (selectionChange)="seleccionUsuarioGrupo($event)">
+                                                <mat-option>
+                                                    <ngx-mat-select-search [formControl]="bankFilterCtrlUsuarios2"></ngx-mat-select-search>
+                                                </mat-option>
+                                                <mat-option *ngFor="let usuario of filteredBanksUsuarios2 | async" [value]="usuario">
+                                                    {{ usuario.usuario }} ( {{ usuario.nombre }} {{ usuario.apellido }} )
+                                                </mat-option>
+                                            </mat-select>
+                                            </mat-form-field>
+                                            <p class="text-center">Cambiar estado de asignación haciendo doble click en un item</p>
+                                        </div> 
+                                    </div>
+                                    <div class="row">
+                                        <div class="col">
+                                            <mat-progress-bar mode="buffer" *ngIf="spinnerDrop2 == 1"></mat-progress-bar>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col d-flex justify-content-center">
+                                            <div cdkDropListGroup>
+                                                <div class="example-container-drag">
+                                                  <h6 class="text-center">No Asignados</h6>
+                                                    <!--Filtrar grupos-->
+                                                    <mat-form-field class="w-full"                 
+                                                                    floatLabel="never">
+                                                        <mat-icon matSuffix>search</mat-icon>
+                                                        <mat-label>Buscar Grupos</mat-label>
+                                                        <input matInput type="search"
+                                                                [(ngModel)]="searchText2">
+                                                    </mat-form-field>
+                                                    <!--/Filtrar grupo-->
+                                                  <div
+                                                    cdkDropList
+                                                    #todoList2="cdkDropList"
+                                                    [cdkDropListData]="todo2"
+                                                    class="example-list"
+                                                    (cdkDropListDropped)="drop2($event)">
+                                                    <div class="example-box" *ngFor="let item of todo2 | filterDrag : searchText2" cdkDrag (dblclick)="dblclickMove2(item, 'done2', 'todo2')">
+                                                        {{ item }}
+                                                        <mat-icon>keyboard_arrow_right</mat-icon>
+                                                    </div>
+                                                  </div>
+                                                </div>
+                                              
+                                                <div class="example-container-drag">
+                                                    <h6 class="text-center">Asignados</h6>
+                                                    <!--Filtrar grupos-->
+                                                    <mat-form-field class="w-full"                 
+                                                                    floatLabel="never">
+                                                        <mat-icon matSuffix>search</mat-icon>
+                                                        <mat-label>Buscar Grupos</mat-label>
+                                                        <input matInput type="search"
+                                                                [(ngModel)]="searchText4">
+                                                    </mat-form-field>
+                                                    <!--/Filtrar grupo--> 
+                                                    <div
+                                                        cdkDropList
+                                                        #doneList2="cdkDropList"
+                                                        [cdkDropListData]="done2"
+                                                        class="example-list"
+                                                        (cdkDropListDropped)="drop2($event)">
+                                                        <div class="example-box" *ngFor="let item of done2 | filterDrag : searchText4" cdkDrag (dblclick)="dblclickMove2(item, 'todo2', 'done2')">
+                                                            <mat-icon>keyboard_arrow_left</mat-icon>
+                                                            {{item}}                                                            
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>                                              
+                                        </div>
+                                    </div>
+                                </mat-card>
+                                <br>
+                            </mat-tab>
+                            <!--/Asignación de grupos a usuarios-->
+                            <!--asignacion de geocercas-->
+                            <mat-tab>
+                                <ng-template mat-tab-label>
+                                    <mat-icon class="example-tab-icon"> stars </mat-icon>
+                                    Asignación de geocercas
+                                </ng-template>
+                                <mat-card>
+                                    <div class="row">
+                                        <div class="col-12 col-md-3"></div>
+                                        <div class="col-12 col-md-6">
+                                            <h6>Seleccione un grupo</h6>
+                                            
+                                            <!--lista grupos con filtro de busqueda-->
+                                            <mat-form-field>
+                                                <mat-select [formControl]="bankCtrlGrupos3" 
+                                                            placeholder="Grupos" 
+                                                            #singleSelectGrupos3
+                                                            (selectionChange)="seleccionGrupo($event)">
+                                                    <mat-option>
+                                                        <ngx-mat-select-search [formControl]="bankFilterCtrlGrupos3"></ngx-mat-select-search>
+                                                    </mat-option>
+                                                    <mat-option *ngFor="let grupo of filteredBanksGrupos3 | async" [value]="grupo">
+                                                        {{ grupo.nombre_grupo }}
+                                                    </mat-option>
+                                                </mat-select>
+                                            </mat-form-field>
+                                            <!--/lista grupos filtro de busqueda-->
+                                            <h6>Colecciones</h6>
+                                            <!--buscador de dispositivo-->
+                                            <mat-form-field style="padding-left: 24px;padding-right: 24px"
+                                                        floatLabel="never">
+                                                <mat-icon matSuffix>search</mat-icon>
+                                                <input matInput (keyup)="applyFilterColecciones($event.target.value)" placeholder="Buscar">
+                                            </mat-form-field>
+                                            <!--/Buscador de dispositivo-->
+                                            <div style="height: 300px;overflow: auto;margin-top: -18px;">
+                                                <table mat-table [dataSource]="dataSourceColeccion">
+                                                    <!-- Checkbox Column -->
+                                                    <ng-container matColumnDef="select">
+                                                    <th mat-header-cell *matHeaderCellDef>
+                                                        <mat-checkbox (change)="$event ? masterToggleColecciones() : null"
+                                                                    [checked]="selectionColeccion.hasValue() && isAllSelectedColecciones()"
+                                                                    [indeterminate]="selectionColeccion.hasValue() && !isAllSelectedColecciones()"
+                                                                    disabled="true">
+                                                        </mat-checkbox>
+                                                    </th>
+                                                    <td mat-cell *matCellDef="let row">
+                                                        <mat-checkbox (click)="$event.stopPropagation()"
+                                                                    (change)="$event ? selectionColeccion.toggle(row) : null; asignarEliminarColeccionAGrupo($event, row)"
+                                                                    [checked]="selectionColeccion.isSelected(row)">
+                                                        </mat-checkbox>
+                                                    </td>
+                                                    </ng-container>
+
+                                                    <!-- Position Column -->
+                                                    <ng-container matColumnDef="nombre">
+                                                        <th mat-header-cell *matHeaderCellDef> Seleccionar todos </th>
+                                                        <td mat-cell *matCellDef="let element"> {{element.nombre}} </td>
+                                                    </ng-container>
+                                                    <tr mat-header-row
+                                                        *matHeaderRowDef="displayedColumnsColeccion; sticky: true"></tr>
+                                                    <tr mat-row
+                                                        *matRowDef="let row; columns: displayedColumnsColeccion;"
+                                                        (click)="selectionColeccion.toggle(row)">
+                                                    </tr>
+                                                </table>
+                                            </div>
+                                        </div>
+                                        <div class="col-12 col-md-3"></div>
+                                    </div>
+                                </mat-card>
+                                <br>
+                            </mat-tab>
+                            <!--/Asignación de geocercas-->
+                            <!--Asignación de subusuario-->
+                            <mat-tab>
+                                <ng-template mat-tab-label>
+                                    <mat-icon class="example-tab-icon"> group_add </mat-icon>
+                                    Asignación de sub-usuarios
+                                </ng-template>
+                                <mat-card>
+                                    <div class="row">
+                                        <div class="col-12 col-md-3"></div>
+                                        <div class="col-12 col-md-6">
+                                            <h6>Seleccione usuario master</h6>
+                                            <!--lista grupos con filtro de busqueda-->
+                                            <mat-form-field>
+                                                <mat-select [formControl]="bankCtrlUsuarios3" 
+                                                            placeholder="Usuario" 
+                                                            #singleSelectUsuarios3
+                                                            (selectionChange)="seleccionUsuariosEsclavos($event)">
+                                                    <mat-option>
+                                                        <ngx-mat-select-search [formControl]="bankFilterCtrlUsuarios3"></ngx-mat-select-search>
+                                                    </mat-option>
+                                                    <mat-option *ngFor="let usuario of filteredBanksUsuarios3 | async" [value]="usuario">
+                                                        {{ usuario.usuario }} ( {{ usuario.nombre }} {{ usuario.apellido }} )
+                                                    </mat-option>
+                                                </mat-select>
+                                            </mat-form-field>
+                                            <!--/lista grupos filtro de busqueda-->
+                                            <h6>Sub usuarios</h6>
+                                            <!--buscador de dispositivo-->
+                                            <mat-form-field style="padding-left: 24px;padding-right: 24px"
+                                                        floatLabel="never">
+                                                <mat-icon matSuffix>search</mat-icon>
+                                                <input matInput (keyup)="applyFilterSubUsuario($event.target.value)" placeholder="Buscar">
+                                            </mat-form-field>
+                                            <!--/Buscador de dispositivo-->
+                                            <div style="height: 300px;overflow: auto;margin-top: -18px;">
+                                                <table mat-table [dataSource]="dataSourceSubUsuario">
+                                                    <!-- Checkbox Column -->
+                                                    <ng-container matColumnDef="select">
+                                                    <th mat-header-cell *matHeaderCellDef>
+                                                        <mat-checkbox (change)="$event ? masterToggleSubUsuarios() : null"
+                                                                    [checked]="selectionSubUsuario.hasValue() && isAllSelectedSubUsuarios()"
+                                                                    [indeterminate]="selectionSubUsuario.hasValue() && !isAllSelectedSubUsuarios()"
+                                                                    disabled="true">
+                                                        </mat-checkbox>
+                                                    </th>
+                                                    <td mat-cell *matCellDef="let row">
+                                                        <mat-checkbox (click)="$event.stopPropagation()"
+                                                                    (change)="$event ? selectionSubUsuario.toggle(row) : null; asignarEliminarMasterASubUsuario($event, row)"
+                                                                    [checked]="selectionSubUsuario.isSelected(row)">
+                                                        </mat-checkbox>
+                                                    </td>
+                                                    </ng-container>
+
+                                                    <!-- Position Column -->
+                                                    <ng-container matColumnDef="nombre">
+                                                        <th mat-header-cell *matHeaderCellDef> Seleccionar todos </th>
+                                                        <td mat-cell *matCellDef="let element"> {{ element.usuario }} ( {{ element.nombre }} {{ element.apellido }} ) </td>
+                                                    </ng-container>
+                                                    <tr mat-header-row
+                                                        *matHeaderRowDef="displayedColumnsSubUsuarios; sticky: true"></tr>
+                                                    <tr mat-row
+                                                        *matRowDef="let row; columns: displayedColumnsSubUsuarios;"
+                                                        (click)="selectionSubUsuario.toggle(row)">
+                                                    </tr>
+                                                </table>
+                                            </div>
+                                        </div>
+                                        <div class="col-12 col-md-3"></div>
+                                    </div>
+                                </mat-card>
+                                <br>
+                            </mat-tab>
+                            <!--Asignación de subusuario-->
+                        </mat-tab-group>
+                    </div>
+                </div>
+            </div>
+
+        </mat-drawer-container>
+        <!--/Container de sidenav y content de mapa-->
+    </mat-drawer-content>
+    <!--CONTENIDO DE LA APP DE MAPA-->
+</mat-drawer-container>
+
+

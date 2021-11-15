@@ -1,0 +1,108 @@
+<h5 mat-dialog-title class="titulo-h5" style="border-bottom: 1px solid #00000029;padding-bottom: 10px;margin-bottom: 0px;"> 
+    {{ data.nombre_vehiculo }} - {{ localStorageService.lenguaje.lan327 }}: {{ singleBarra.length }}
+</h5>
+<div mat-dialog-content style="background: aliceblue !important; padding-top: 10px">
+    <div class="row">
+        <div class="col" style="width:427px !important">
+            <mat-card style="height: 92%;" class="d-flex justify-content-center">
+                <ngx-charts-gauge
+                    [scheme]="colorSchemeGauge"
+                    [results]="singleGauge"
+                    [legend]="legendGauge"
+                    [legendPosition]="legendPositionGauge"
+                    [showAxis]="showAxisGauge"
+                    [tooltipDisabled]="tooltipDisabledGauge"
+                    [margin]="[50,50,0,50]"
+                    [legendTitle]="legendTitleGauge"
+                    [tooltipDisabled]="tooltipDisabledGauge"
+                    [units]="units">
+                </ngx-charts-gauge>
+            </mat-card> 
+        </div>
+        <div class="col">
+            <!--ngx-charts-line-chart
+                [view]="viewLineal"
+                [gradient]="true"
+                [scheme]="colorSchemeLineal"
+                [legend]="legendLineal"
+                [showXAxisLabel]="showXAxisLabelLineal"
+                [showYAxisLabel]="showYAxisLabelLineal"
+                [xAxis]="xAxisLabel"
+                [yAxis]="yAxisLabel"
+                [xAxisLabel]="xAxisLabelLineal"
+                [yAxisLabel]="yAxisLabelLineal"
+                [timeline]="timelineLineal"
+                [results]="multiLineal"
+                [curve]="curve"
+                [legendTitle]="legendTitleLineal"
+                [legendPosition]="legendPositionLineal"
+                [roundDomains]="roundDomainsLineal">
+            </ngx-charts-line-chart-->
+            <ngx-charts-bar-vertical
+                [view]="viewLineal"                       
+                [scheme]="colorSchemeBarra"
+                [results]="singleBarra"
+                [gradient]="gradientBarra"
+                [xAxis]="showXAxisBarra"
+                [yAxis]="showYAxisBarra"
+                [showXAxisLabel]="showXAxisLabelBarra"
+                [showYAxisLabel]="showYAxisLabelBarra"
+                [xAxisLabel]="xAxisLabelBarra"
+                [yAxisLabel]="yAxisLabelBarra"
+                [showDataLabel]="showDataLabelBarra"
+                [legendPosition]="legendPositionBarra"
+                [legend]="showLegendBarra"
+                [legendTitle]="legendTitleBarra"
+                [maxYAxisTickLength]="maxYAxisTickLengthBarra"
+                [barPadding]="barPaddingBarra"
+                (select)="onSelect($event)">
+            </ngx-charts-bar-vertical>
+        </div>
+        
+    </div>
+    <div class="row">
+        <div class="col" style="height: 210px !important;">
+            <mat-card style="height: 92%;">
+                <table class="table table-sm">
+                    <tbody>
+                        <tr class="text-table-sm">
+                            <th class="color-black">{{ localStorageService.lenguaje.lan020 }}</th>
+                            <td class="color-black">{{ data.nombre_vehiculo }}</td>
+                        </tr>
+                        <tr class="text-table-sm">
+                            <th class="color-black" style="white-space:nowrap">{{ localStorageService.lenguaje.lan283 }}</th>
+                            <td class="color-black">{{ data.velocidad_maxima }} km/h</td>
+                        </tr>
+                        <tr class="text-table-sm">
+                            <th class="color-black">{{ localStorageService.lenguaje.lan138 }}</th>
+                            <td class="color-black">{{ data.fecha }}</td>
+                        </tr>
+                        <tr class="text-table-sm">
+                            <th class="color-black">{{ localStorageService.lenguaje.lan061 }}</th>
+                            <td class="color-black">{{ direccion }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </mat-card>
+        </div>
+        <div class="col">
+            <div #map id="map" style="height: 200px !important; width: 100% !important;border: 1px solid #0000003d;border-radius: 10px;"></div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col" style="height: 210px !important;">
+            <mat-card style="height: 92%">
+                <h2 class="text-center" style="font-size: 100px;margin-top:45px">{{ notaConduccion }}</h2>
+                <p class="text-center" style="margin-top:25px">
+                    {{ localStorageService.lenguaje.lan340 }}
+                </p>
+            </mat-card>
+        </div>
+        <div class="col">
+
+        </div>
+    </div>
+</div>
+<div mat-dialog-actions class="d-flex justify-content-end">
+    <button mat-button [mat-dialog-close]="data.body" cdkFocusInitial> <mat-icon>close</mat-icon> {{ localStorageService.lenguaje.lan306 }}</button>
+</div>

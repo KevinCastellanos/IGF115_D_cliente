@@ -1,0 +1,714 @@
+<mat-drawer-container class="example-container2" hasBackdrop="true">
+    <!--Menu lateral-->
+    <mat-drawer #drawer2 mode="over">
+        <!-- definimos el ancho del sidenav mode=OVER -->
+        <div class="W-300">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col p-0">
+                        <mat-toolbar-row>
+                            <h5>{{ localStorageService.lenguaje.lan075 }}</h5>
+                            <span class="flex-right"></span>
+                            <button mat-icon-button
+                                    color="primary"
+                                    (click)="drawer2.toggle()">
+                                    <mat-icon>close</mat-icon>
+                            </button>
+                        </mat-toolbar-row>
+                        <mat-nav-list>
+                            <mat-divider></mat-divider>
+                            <a  mat-list-item 
+                                routerLink="/principal"> 
+                                <mat-icon mat-list-icon class="s-r-5">
+                                    home
+                                </mat-icon>
+                                {{ localStorageService.lenguaje.lan078 }}
+                            </a>
+                            <mat-divider></mat-divider>
+                            <div *ngFor="let modulo of modulos">
+                                <a  *ngIf="modulo.id_modulo !== 16"
+                                    routerLinkActive="active-link"
+                                    mat-list-item [routerLink]="['/'+modulo.enrutador]"> 
+                                    <mat-icon mat-list-icon class="s-r-5">
+                                        {{ modulo.icono }}
+                                    </mat-icon>
+                                    {{ modulo.nombre | traductor }}
+                                    <mat-divider></mat-divider>
+                                </a>
+                                <a  *ngIf="modulo.id_modulo === 16"
+                                    routerLinkActive="active-link"
+                                    mat-list-item 
+                                    [href]="modulo.enrutador + 'user=' + localStorageService.usuario.usuario.usuario + '&pass=' + localStorageService.usuario.usuario.password"> 
+                                    <mat-icon mat-list-icon class="s-r-5">
+                                        {{ modulo.icono }}
+                                    </mat-icon>
+                                    {{ modulo.nombre | traductor }}
+                                    <mat-divider></mat-divider>
+                                </a>
+                            </div>
+                        </mat-nav-list>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- fin de definicion del ancho del sidenav mode=OVER -->
+    </mat-drawer>
+    <!--/Menu lateral-->
+    <!--CONTENIDO DE LA APP DE MAPA-->
+    <mat-drawer-content class="p-r-c">
+        <!--TOOLBAR-->
+        <mat-toolbar color="warn" class="fixed-top">
+                <mat-toolbar-row>
+                    <button mat-icon-button (click)="drawer2.toggle()">
+                            <mat-icon>menu</mat-icon>
+                    </button>
+                    <span style="margin-left: 5px">{{ localStorageService.lenguaje.lan077 }}</span>
+                    <button mat-icon-button routerLink="/principal"
+                            [matTooltip]="localStorageService.lenguaje.lan080"> 
+                        <mat-icon mat-list-icon>
+                            home
+                        </mat-icon>
+                    </button>
+                    <span class="flex-right"></span>
+                    <sup *ngIf="localStorageService.usuario.usuario.root ===1" style="margin-right: 20px;">
+                        [{{ localStorageService.usuario.usuario.servidor }}]
+                    </sup>
+                    <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Example icon-button with a menu">
+                        <mat-icon>more_vert</mat-icon>
+                    </button>
+                    <mat-menu #menu="matMenu" xPosition="before">
+                        <button mat-menu-item>
+                          <mat-icon>person</mat-icon>
+                          <span>{{ localStorageService.usuario.usuario.nombre }} {{ localStorageService.usuario.usuario.apellido }} </span>
+                        </button>
+                        <button mat-menu-item disabled>
+                          <mat-icon>settings_applications</mat-icon>
+                          <span>{{ localStorageService.lenguaje.lan082 }}</span>
+                        </button>
+                        <button mat-menu-item 
+                                [matMenuTriggerFor]="idioma">
+                            <mat-icon>translate</mat-icon>
+                            {{ localStorageService.lenguaje.lan288 }}
+                        </button>
+                        <button mat-menu-item
+                                (click)="salir()">
+                          <mat-icon>exit_to_app</mat-icon>
+                          <span>{{ localStorageService.lenguaje.lan081 }}</span>
+                        </button>
+                    </mat-menu>
+                    <mat-menu #idioma="matMenu">
+                        <button mat-menu-item (click)="cambiarIdioma('es')">{{ localStorageService.lenguaje.lan289 }}</button>
+                        <button mat-menu-item (click)="cambiarIdioma('en')">{{ localStorageService.lenguaje.lan290 }}</button>
+                    </mat-menu>
+                </mat-toolbar-row>
+        </mat-toolbar>
+        <!--tOOLBAR-->
+        <!--Container de sidenav y content de mapa-->
+        <mat-drawer-container class="example-container">
+            <!--MENU LATERAL INTERNO-->
+            <mat-drawer #drawer mode="side" opened class="w-sidenav-responsive top-res">
+                <!-- definimos el ancho del sidenav mode=side -->
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col-10">
+                                <mat-form-field class="w-full" 
+                                                floatLabel="never">
+                                    <mat-icon matSuffix>search</mat-icon>
+                                    <mat-label>{{ localStorageService.lenguaje.lan013 }}</mat-label>
+                                    <input matInput type="search"
+                                            [(ngModel)]="searchText">
+                                </mat-form-field>
+                            </div>
+                        </div>
+                        <div class="row" style="margin-top: -20px;">
+                            <div class="col">
+                                <mat-nav-list>
+                                    <mat-list-item  *ngFor="let conductor of conductores | filter : searchText:filteredCount" (click)="conductorSeleccionado(conductor)">
+                                        {{ conductor.nombre }}
+                                        <mat-divider></mat-divider>
+                                    </mat-list-item>
+                                </mat-nav-list>
+                            </div>
+                        </div>
+                    </div>
+                <!-- fin de definicion del ancho del sidenav mode=side -->
+            </mat-drawer>
+            <!--/MENU LATERAL INTERNO-->
+            <!--CONTENEDOR APP-->
+            <mat-drawer-content class="p-r-c2" style="top: 32px !important;">
+                <div class="container-fluid h-full p-lr-0">
+                    <div class="row h-full">
+                        <div class="col h-full">
+                            <button  mat-mini-fab 
+                                color="warn"
+                                (click)="drawer.toggle()"
+                                class="position-absolute p-lt  z-index-1000"
+                                ><mat-icon>fullscreen</mat-icon>
+                            </button>
+                            <button mat-mini-fab 
+                                    color="warn"
+                                    aria-label="Example icon-button with a heart icon"
+                                    [matTooltip]="localStorageService.lenguaje.lan073"
+                                    class="position-absolute p-rb2  z-index-1000"
+                                    (click)="cardVisibleCrearConductor()"
+                                    style="right: 15px;">
+                                <mat-icon>add</mat-icon>
+                            </button>
+                            <br><br><br>
+                            
+                            <div class="container">
+
+                                <div class="row" [hidden]="!cardVisible">
+                                    
+                                    <div class="col">
+                                        <div class='flippable-card' [ngClass]="{'flipped':flipped}" style="position: sticky;">
+                                            
+                                            <!--card primaria mostrar-->
+                                            <mat-card class=''>
+                                                <mat-card-header>
+                                                    <div mat-card-avatar class="example-header-image"></div>
+                                                    <mat-card-title>
+                                                        <div class="d-flex justify-content-between">
+                                                            <!--nombre completo de conductor-->
+                                                            <div>
+                                                                {{ conductor.nombre }}
+                                                            </div>
+                                                            <div>
+                                                                <button mat-button color="warn" (click)='flipped = !flipped'>
+                                                                    <mat-icon>edit</mat-icon>
+                                                                    {{ localStorageService.lenguaje.lan070 }}
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </mat-card-title>
+                                                    <mat-card-subtitle>ID {{conductor.id_conductor }} </mat-card-subtitle>
+                                                </mat-card-header>
+                                                <mat-card-content>
+                                                    <div>
+                                                        <div class="row">
+                                                            <div class="col">
+                                                                <div class="card">
+                                                                    <div class="card-body">
+                                                                        <h6 class="card-subtitle mb-2 text-muted text-center">{{ localStorageService.lenguaje.lan064 }}</h6>
+                                                                        
+                                                                        <p style="margin-top: 0px; margin-bottom: 0px;">
+                                                                            <strong class="font-weight-bold">{{ localStorageService.lenguaje.lan058 }}</strong>
+                                                                        </p>
+                                                                      
+                                                                        <p style="margin-top: 0px; margin-bottom: 0px;">
+                                                                            {{ conductor.nombre }}
+                                                                        </p>
+                                                                        
+                                                                        <br>
+                                                                        <p style="margin-top: 0px; margin-bottom: 0px;">
+                                                                            <strong class="font-weight-bold">{{ localStorageService.lenguaje.lan059 }}</strong>
+                                                                        </p>
+                                                                        <p style="margin-top: 0px; margin-bottom: 0px;">
+                                                                            {{ conductor.pais }}
+                                                                        </p>
+                                                                        <br>
+                                                                        <p style="margin-top: 0px; margin-bottom: 0px;">
+                                                                            <strong class="font-weight-bold">{{ localStorageService.lenguaje.lan060 }}</strong>
+                                                                        </p>
+                                                                        <p style="margin-top: 0px; margin-bottom: 0px;">
+                                                                           {{ conductor.estado }}
+                                                                        </p>
+                                                                        <br>
+                                                                        <p style="margin-top: 0px; margin-bottom: 0px;">
+                                                                            <strong class="font-weight-bold">{{ localStorageService.lenguaje.lan061 }}</strong>
+                                                                        </p>
+                                                                        <p style="margin-top: 0px; margin-bottom: 0px;">
+                                                                            {{ conductor.direccion }}
+                                                                        </p>
+                                                                        <br>
+                                                                        <p style="margin-top: 0px; margin-bottom: 0px;">
+                                                                            <strong class="font-weight-bold">Tipo de sangre{{ localStorageService.lenguaje.lan062 }}</strong>
+                                                                        </p>
+                                                                        <p style="margin-top: 0px; margin-bottom: 0px;">
+                                                                            {{ conductor.tipo_sangre }}
+                                                                        </p>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col">
+                                                                <div class="card">
+                                                                    <div class="card-body">
+                                                                        <h6 class="card-subtitle mb-2 text-muted text-center">{{ localStorageService.lenguaje.lan067 }}</h6>
+                                                                        <p style="margin-top: 0px; margin-bottom: 0px;">
+                                                                            <strong class="font-weight-bold">{{ localStorageService.lenguaje.lan063 }}</strong>
+                                                                        </p>
+                                                                        <p style="margin-top: 0px; margin-bottom: 0px;">
+                                                                            {{ conductor.telefono }}
+                                                                        </p>
+                                                                        <br>
+                                                                        <p style="margin-top: 0px; margin-bottom: 0px;">
+                                                                            <strong class="font-weight-bold">{{ localStorageService.lenguaje.lan065 }}</strong>
+                                                                        </p>
+                                                                        <p style="margin-top: 0px; margin-bottom: 0px;">
+                                                                            {{ conductor.correo }}
+                                                                        </p>
+                                                                        <br>
+                                                                        <p style="margin-top: 0px; margin-bottom: 0px;">
+                                                                            <strong class="font-weight-bold">{{ localStorageService.lenguaje.lan066 }}</strong>
+                                                                        </p>
+                                                                        <p style="margin-top: 0px; margin-bottom: 0px;">
+                                                                            {{ conductor.contacto_emergencia }}
+                                                                        </p>
+                                                                        <br>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col">
+                                                                <div class="card">
+                                                                    <div class="card-body">
+                                                                        <h6 class="card-subtitle mb-2 text-muted text-center">{{ localStorageService.lenguaje.lan020 }}</h6>
+                                                                        <p style="margin-top: 0px; margin-bottom: 0px;">
+                                                                            <strong class="font-weight-bold">{{ localStorageService.lenguaje.lan068 }}</strong>
+                                                                        </p>
+                                                                        <p style="margin-top: 0px; margin-bottom: 0px;">
+                                                                            {{ conductor.licencia }}
+                                                                        </p>
+                                                                        <br>
+                                                                        <p style="margin-top: 0px; margin-bottom: 0px;">
+                                                                            <strong class="font-weight-bold">{{ localStorageService.lenguaje.lan069 }}</strong>
+                                                                        </p>
+                                                                        <p style="margin-top: 0px; margin-bottom: 0px;">
+                                                                            {{ conductor.tipo_licencia }}
+                                                                        </p>
+                                                                        <br>
+                                                                        <p style="margin-top: 0px; margin-bottom: 0px;">
+                                                                            <strong class="font-weight-bold">{{ localStorageService.lenguaje.lan020 }}</strong>
+                                                                        </p>
+                                                                        <p>
+                                                                            {{ conductor.nombre_vehiculo }} / reemplazo
+                                                                        </p>
+                                                                        p
+                                                                        <br>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div> 
+                                                </mat-card-content>
+                                            </mat-card>
+                                            <!--/card primaria mostrar-->
+                                            <!--card secundaria editar-->
+                                            <mat-card class='back' style="padding-bottom: 50px !important;">
+                                                
+                                                <mat-card-header>
+                                                    <div mat-card-avatar class="example-header-image"></div>
+                                                    <mat-card-title>
+                                                        <div class="d-flex justify-content-between">
+                                                            <div>
+                                                                {{ conductor.nombre }}
+                                                            </div>
+                                                            <div>
+                                                                <!--button mat-button color="warn" (click)='flipped = !flipped'>
+                                                                    <mat-icon>close</mat-icon>
+                                                                    {{ localStorageService.lenguaje.lan084 }}
+                                                                </button-->
+                                                            </div>
+                                                        </div>
+                                                    </mat-card-title>
+                                                    <mat-card-subtitle>ID {{ conductor.id_conductor }} </mat-card-subtitle>
+                                                </mat-card-header>
+                                                <mat-card-content>    
+                                                    <div class="row">
+                                                        <div class="col-3"></div>
+                                                        <div class="col-6">
+                                                            <div class="card">
+                                                                <div class="card-body">
+                                                                    <!--Formulario de editado-->
+                                                                    <h6 class="card-subtitle mb-2 text-muted text-center">{{ localStorageService.lenguaje.lan064 }}</h6>
+                                                                    <p style="margin-top: 0px; margin-bottom: -15px;">
+                                                                        <strong class="font-weight-bold">{{ localStorageService.lenguaje.lan058 }}</strong>
+                                                                    </p>
+                                                                    <mat-form-field class="example-full-width">
+                                                                        <input  matInput 
+                                                                                name="nombre" 
+                                                                                [(ngModel)]="conductor.nombre"
+                                                                                id="nombre">
+                                                                    </mat-form-field>
+                                                                    
+                                                                    <br>
+                                                                    <p style="margin-top: 0px; margin-bottom: -15px;">
+                                                                        <strong class="font-weight-bold">{{ localStorageService.lenguaje.lan059 }}</strong>
+                                                                    </p>
+                                                                    <mat-form-field class="example-full-width">
+                                                                        <input  matInput 
+                                                                                name="pais" 
+                                                                                [(ngModel)]="conductor.pais"
+                                                                                id="pais">
+                                                                    </mat-form-field>
+                                                                    <br>
+                                                                    <p style="margin-top: 0px; margin-bottom: -15px;">
+                                                                        <strong class="font-weight-bold">{{ localStorageService.lenguaje.lan060 }}</strong>
+                                                                    </p>
+                                                                    <mat-form-field class="example-full-width">
+                                                                        <input  matInput 
+                                                                                name="estado" 
+                                                                                [(ngModel)]="conductor.estado"
+                                                                                id="estado">
+                                                                    </mat-form-field>
+                                                                    <br>
+                                                                    <p style="margin-top: 0px; margin-bottom: -15px;">
+                                                                        <strong class="font-weight-bold">{{ localStorageService.lenguaje.lan061 }}</strong>
+                                                                    </p>
+                                                                    <mat-form-field class="example-full-width">
+                                                                        <input  matInput 
+                                                                                name="direccion" 
+                                                                                [(ngModel)]="conductor.direccion"
+                                                                                id="direccion">
+                                                                    </mat-form-field>
+                                                                    <br>
+                                                                    <p style="margin-top: 0px; margin-bottom: -15px;">
+                                                                        <strong class="font-weight-bold">{{ localStorageService.lenguaje.lan062 }}</strong>
+                                                                    </p>
+                                                                    <mat-form-field class="example-full-width">
+                                                                        <input  matInput 
+                                                                                name="tipoSangre" 
+                                                                                [(ngModel)]="conductor.tipo_sangre"
+                                                                                id="tipoSangre">
+                                                                    </mat-form-field>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-3"></div>
+                                                        <br>
+                                                        <div class="col-3"></div>
+                                                        <div class="col-6">
+                                                            <div class="card">
+                                                                <div class="card-body">
+                                                                    <h6 class="card-subtitle mb-2 text-muted text-center">{{ localStorageService.lenguaje.lan067 }}</h6>
+                                                                    <p style="margin-top: 0px; margin-bottom: -15px;">
+                                                                        <strong class="font-weight-bold">{{ localStorageService.lenguaje.lan063 }}</strong>
+                                                                    </p>
+                                                                    <mat-form-field class="example-full-width">
+                                                                        <input  matInput 
+                                                                                name="telefono" 
+                                                                                [(ngModel)]="conductor.telefono"
+                                                                                id="telefono">
+                                                                    </mat-form-field>
+                                                                    <br>
+                                                                    <p style="margin-top: 0px; margin-bottom: -15px;">
+                                                                        <strong class="font-weight-bold">{{ localStorageService.lenguaje.lan065 }}</strong>
+                                                                    </p>
+                                                                    <mat-form-field class="example-full-width">
+                                                                        <input  matInput 
+                                                                                name="correo" 
+                                                                                [(ngModel)]="conductor.correo"
+                                                                                id="correo">
+                                                                    </mat-form-field>
+                                                                    <br>
+                                                                    <p style="margin-top: 0px; margin-bottom: -15px;">
+                                                                        <strong class="font-weight-bold">{{ localStorageService.lenguaje.lan066 }}</strong>
+                                                                    </p>
+                                                                    <mat-form-field class="example-full-width">
+                                                                        <input  matInput 
+                                                                                name="contactoEmergencia" 
+                                                                                [(ngModel)]="conductor.contacto_emergencia"
+                                                                                id="contactoEmergencia">
+                                                                    </mat-form-field>
+                                                                    <br>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-3"></div>
+                                                        <br>
+                                                        <div class="col-3"></div>
+                                                        <div class="col-6">
+                                                            
+                                                            <div class="card">
+                                                                <div class="card-body">
+                                                                    <h6 class="card-subtitle mb-2 text-muted text-center">{{ localStorageService.lenguaje.lan020 }}</h6>
+                                                                    <p style="margin-top: 0px; margin-bottom: -15px;">
+                                                                        <strong class="font-weight-bold">{{ localStorageService.lenguaje.lan068 }}</strong>
+                                                                    </p>
+                                                                    <mat-form-field class="example-full-width">
+                                                                        <input  matInput 
+                                                                                name="licencia" 
+                                                                                [(ngModel)]="conductor.licencia"
+                                                                                id="licencia">
+                                                                    </mat-form-field>
+                                                                    <br>
+                                                                    <p style="margin-top: 0px; margin-bottom: -15px;">
+                                                                        <strong class="font-weight-bold">{{ localStorageService.lenguaje.lan069 }}</strong>
+                                                                    </p>
+                                                                    <mat-form-field class="example-full-width">
+                                                                        <input  matInput 
+                                                                                name="tipoLicencia" 
+                                                                                [(ngModel)]="conductor.tipo_licencia"
+                                                                                id="tipoLicencia">
+                                                                    </mat-form-field>
+                                                                    <br>
+                                                                    
+                                                                    <div class="row" style="border: 1px solid rgb(161, 161, 161);padding-bottom:10px" *ngIf="conductor.nombre_vehiculo !== ''">
+                                                                        <div class="col-12">
+                                                                            <p style="margin-top: 0px; margin-bottom: 0px;">
+                                                                                <strong class="font-weight-bold">{{ localStorageService.lenguaje.lan020 }}</strong>
+                                                                            </p>
+                                                                            <p>
+                                                                                {{ conductor.nombre_vehiculo }}
+                                                                            </p>
+                                                                        </div>
+                                                                        <div class="col-12">
+                                                                            <button mat-raised-button
+                                                                                        (click)="desasociarVehiculoConductor()"
+                                                                                        color="warn">
+                                                                                disassociate driver from vehicle
+                                                                            </button>
+                                                                        </div>
+                                                                    </div>
+                                                                    <br>
+                                                                    <div class="row" style="border: 1px solid rgb(161, 161, 161);padding-bottom:10px" *ngIf="conductor.nombre_vehiculo === ''">
+                                                                        <mat-divider></mat-divider>
+                                                                        <div class="col-12">
+                                                                            <br>
+                                                                            <p>
+                                                                                Associate vehicle to driver
+                                                                            </p>
+                                                                            <!--lista grupos con filtro de busqueda-->
+                                                                            <mat-form-field>
+                                                                                <mat-select [formControl]="bankCtrlVehiculos" 
+                                                                                            placeholder="Vehiculos" 
+                                                                                            #singleSelectVehiculos
+                                                                                            [(ngModel)]="vehiculoSeleccionado"
+                                                                                            (selectionChange)="nuevoVehiculoAsociado(vehiculoSeleccionado)">
+                                                                                    <mat-option>
+                                                                                        <ngx-mat-select-search [formControl]="bankFilterCtrlVehiculos"></ngx-mat-select-search>
+                                                                                    </mat-option>
+                                                                                    <mat-option *ngFor="let vehiculo of filteredBanksVehiculos | async" [value]="vehiculo">
+                                                                                        {{ vehiculo.nombre }}
+                                                                                    </mat-option>
+                                                                                </mat-select>
+                                                                            </mat-form-field>
+                                                                            <!--/lista grupos filtro de busqueda--> 
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            
+                                                        </div>
+                                                        <div class="col-3"></div>
+                                                    </div>
+
+                                                </mat-card-content>
+                                                <mat-card-actions class="d-flex justify-content-between">
+                                                    <button mat-button 
+                                                            color="warn"
+                                                            [disabled]="disableBtnEliminar"
+                                                            (click)="eliminarConductor()">
+                                                            <mat-icon *ngIf="datosValidosEliminar === true">
+                                                                <mat-spinner  color="accent" diameter="20">
+                                                                </mat-spinner>
+                                                            </mat-icon>
+                                                            <span *ngIf="datosValidosEliminar === false">
+                                                                {{ localStorageService.lenguaje.lan071 }}
+                                                            </span>
+                                                    </button>
+                                                    <button mat-raised-button 
+                                                            color="warn" 
+                                                            class="flippable-from" 
+                                                            (click)="actualizarConductor()"
+                                                            [disabled]="disableBtn">
+                                                            <mat-icon *ngIf="datosValidos === true">
+                                                                <mat-spinner  color="accent" diameter="20">
+                                                                </mat-spinner>
+                                                            </mat-icon>
+                                                            <span *ngIf="datosValidos === false">
+                                                                {{ localStorageService.lenguaje.lan072 }}
+                                                            </span>
+                                                    </button>
+                                                </mat-card-actions>
+                                            </mat-card>
+                                            
+                                            <!--/card secundaria editar-->
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="row" *ngIf="cardVisibleConductor">
+                                    <div class="col">
+                                        <mat-card>
+                                            <mat-card-header>
+                                                <mat-card-title>
+                                                    <div class="d-flex justify-content-between">
+                                                        <div>                                                        
+                                                            {{ localStorageService.lenguaje.lan085 }}
+                                                        </div>
+                                                        <div>
+                                                            <button mat-button color="warn" (click)="ocultarCardCrearConductor()">
+                                                                <mat-icon>close</mat-icon>
+                                                                {{ localStorageService.lenguaje.lan084 }}
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </mat-card-title>
+                                            </mat-card-header>
+                                            <mat-card-content>
+                                                <mat-horizontal-stepper linear #stepper>
+                                                    <mat-step [stepControl]="firstFormGroup" [editable]="isEditable">
+                                                        <form [formGroup]="firstFormGroup">
+                                                            <ng-template matStepLabel>{{ localStorageService.lenguaje.lan064 }}</ng-template>
+                                                                <div class="row">
+                                                                    <div class="col">
+                                                                        <mat-form-field>
+                                                                            <mat-label>{{ localStorageService.lenguaje.lan058 }}</mat-label>
+                                                                            <input  matInput
+                                                                                    name="nombre"
+                                                                                    id="nombre" 
+                                                                                    formControlName="nombreCtrl" 
+                                                                                    placeholder="" 
+                                                                                    required>
+                                                                        </mat-form-field>
+                                                                        <mat-form-field>
+                                                                            <mat-label>{{ localStorageService.lenguaje.lan059 }}</mat-label>
+                                                                            <input  matInput 
+                                                                                    formControlName="paisCtrl" 
+                                                                                    placeholder="">
+                                                                        </mat-form-field>
+                                                                        <mat-form-field>
+                                                                            <mat-label>{{ localStorageService.lenguaje.lan060 }}</mat-label>
+                                                                            <input  matInput 
+                                                                                    formControlName="estadotCtrl" 
+                                                                                    placeholder="">
+                                                                        </mat-form-field>
+                                                                        <mat-form-field>
+                                                                            <mat-label>{{ localStorageService.lenguaje.lan061 }}</mat-label>
+                                                                            <input  matInput 
+                                                                                    formControlName="direcciontCtrl" 
+                                                                                    placeholder="">
+                                                                        </mat-form-field>
+                                                                        <mat-form-field>
+                                                                            <mat-label>{{ localStorageService.lenguaje.lan062 }}</mat-label>
+                                                                            <input  matInput 
+                                                                                    formControlName="tipoSangretCtrl" 
+                                                                                    placeholder="">
+                                                                        </mat-form-field>
+                                                                    </div>
+                                                                    <div class="col">
+
+                                                                    </div>
+                                                                </div>
+                                                            <div>
+                                                                <button mat-button matStepperNext>{{ localStorageService.lenguaje.lan086 }}<mat-icon>navigate_next</mat-icon></button>
+                                                            </div>
+                                                        </form>
+                                                    </mat-step>
+                                                    <mat-step [stepControl]="secondFormGroup" [editable]="isEditable">
+                                                        <form [formGroup]="secondFormGroup">
+                                                            <ng-template matStepLabel>{{ localStorageService.lenguaje.lan067 }}</ng-template>
+                                                                <div class="row">
+                                                                    <div class="col">
+                                                                        <mat-form-field>
+                                                                            <mat-label>{{ localStorageService.lenguaje.lan063 }}</mat-label>
+                                                                            <input  matInput
+                                                                                    name="telefono"
+                                                                                    id="telefono" 
+                                                                                    formControlName="telefonoCtrl" 
+                                                                                    placeholder=""
+                                                                                    required>
+                                                                        </mat-form-field>
+                                                                        <mat-form-field>
+                                                                            <mat-label>{{ localStorageService.lenguaje.lan065 }}</mat-label>
+                                                                            <input  matInput
+                                                                                    type="email"
+                                                                                    name="correo"
+                                                                                    id="correo" 
+                                                                                    formControlName="correoCtrl" 
+                                                                                    placeholder="">
+                                                                        </mat-form-field>
+                                                                        <mat-form-field>
+                                                                            <mat-label>{{ localStorageService.lenguaje.lan066 }}</mat-label>
+                                                                            <input  matInput
+                                                                                    name="contacto"
+                                                                                    id="contacto" 
+                                                                                    formControlName="contactoCtrl" 
+                                                                                    placeholder="">
+                                                                        </mat-form-field>
+                                                                    </div>
+                                                                    <div class="col">
+
+                                                                    </div>
+                                                                </div>
+                                                            <div>
+                                                                <button mat-button matStepperPrevious><mat-icon>navigate_before</mat-icon>{{ localStorageService.lenguaje.lan057 }}</button>
+                                                                <button mat-button matStepperNext>{{ localStorageService.lenguaje.lan086 }}<mat-icon>navigate_next</mat-icon></button>
+                                                            </div>
+                                                        </form>
+                                                    </mat-step>
+                                                    <mat-step [stepControl]="tercerFormGroup" [editable]="isEditable">
+                                                        <form [formGroup]="tercerFormGroup">
+                                                            <ng-template matStepLabel>{{ localStorageService.lenguaje.lan020 }}</ng-template>
+                                                            <div class="row">
+                                                                <div class="col">
+                                                                    <!--lista vehiculos con filtro de busqueda-->
+                                                                    <mat-form-field>
+                                                                        <mat-select [formControl]="bankCtrlDispositivo" 
+                                                                                    [placeholder]="localStorageService.lenguaje.lan020" 
+                                                                                    #singleSelectDispositivo
+                                                                                    (selectionChange)="validarVehiculoSeleccionado(bankCtrlDispositivo)">
+                                                                            <mat-option>
+                                                                                <ngx-mat-select-search [formControl]="bankFilterCtrlDispositivo"></ngx-mat-select-search>
+                                                                            </mat-option>
+                                                                            <mat-option *ngFor="let dispositivo of filteredBanksDispositivo | async" [value]="dispositivo">
+                                                                                {{ dispositivo.nombre }}
+                                                                            </mat-option>
+                                                                        </mat-select>
+                                                                    </mat-form-field>
+                                                                    <!--/lista vehiculo filtro de busqueda-->
+                                                                    <mat-form-field>
+                                                                        <mat-label>{{ localStorageService.lenguaje.lan068 }}</mat-label>
+                                                                        <input  matInput
+                                                                                name="licencia"
+                                                                                id="licencia" 
+                                                                                formControlName="licenciaCtrl" 
+                                                                                placeholder="">
+                                                                    </mat-form-field>
+                                                                    <mat-form-field>
+                                                                        <mat-label>{{ localStorageService.lenguaje.lan069 }}</mat-label>
+                                                                        <input  matInput
+                                                                                name="tipoLicencia"
+                                                                                id="tipoLicencia" 
+                                                                                formControlName="tipoLicenciaCtrl" 
+                                                                                placeholder="">
+                                                                    </mat-form-field>
+                                                                    
+                                                                </div>
+                                                                <div class="col">
+
+                                                                </div>
+                                                            </div>
+                                                        </form>
+                                                    <div>
+                                                        <button mat-button matStepperPrevious><mat-icon>navigate_before</mat-icon> {{ localStorageService.lenguaje.lan057 }}</button>
+                                                        <!--boton validado-->
+                                                        <button mat-raised-button 
+                                                                color="warn"
+                                                                (click)="guardarConductor(stepper)">
+                                                                <mat-icon *ngIf="spinnerVehiculoRegistrar">
+                                                                    <mat-spinner  color="accent" diameter="20">
+                                                                    </mat-spinner>
+                                                                </mat-icon>
+                                                                {{ localStorageService.lenguaje.lan087 }}
+                                                        </button>
+                                                        <!--/boton validado-->
+                                                    </div>
+                                                    </mat-step>
+                                                  </mat-horizontal-stepper>
+                                            </mat-card-content>
+                                        </mat-card>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                        </div>
+                    </div>
+                </div>
+            </mat-drawer-content>
+            <!--/CONTENEDOR APP-->
+        </mat-drawer-container>
+        <!--/Container de sidenav y content de mapa-->
+    </mat-drawer-content>
+    <!--CONTENIDO DE LA APP DE MAPA-->
+</mat-drawer-container>

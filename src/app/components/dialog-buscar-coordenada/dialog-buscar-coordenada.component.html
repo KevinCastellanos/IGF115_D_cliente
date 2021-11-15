@@ -1,0 +1,18 @@
+<h5 mat-dialog-title class="text-center">buscar coordenadas</h5>
+<div mat-dialog-content>
+    <mat-form-field class="w-full">
+        <mat-label>Coordenadas lat, lng</mat-label>
+        <input  matInput 
+                placeholder="Ej. 13.701147, -89.224385" 
+                type="text" 
+                name="coordenada" 
+                [(ngModel)]="coordenada"
+                id="coordenada">
+      </mat-form-field>
+</div>
+<div mat-dialog-actions class="d-flex justify-content-end">
+    <button mat-button (click)="onDismiss()">Cancelar</button>
+    <button mat-raised-button color="warn" (click)="buscarCoordenadas()">
+        Buscar
+    </button>
+</div>

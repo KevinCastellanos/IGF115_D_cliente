@@ -1,0 +1,4 @@
+.boton-gradiente {
+    background: rgb(0,0,0);
+    background: radial-gradient(circle, rgb(0 0 0 / 80%) 0%, rgb(0 0 0 / 59%) 8%, rgb(8 8 8 / 30%) 86%);
+}

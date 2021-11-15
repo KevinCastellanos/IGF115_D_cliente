@@ -1,0 +1,97 @@
+<h5 mat-dialog-title class="text-center">Editar eventos</h5>
+<div mat-dialog-content>
+    <div class="row d-flex align-items-center">
+      <div class="col">
+        <mat-form-field class="w-full">
+          <mat-label>Nombre Cofiguración</mat-label>
+          <input  matInput
+                  type="text" 
+                  name="nombreConfig" 
+                  [(ngModel)]="data.nombre"
+                  id="nombreConfig">
+      </mat-form-field>
+      </div>
+      <div class="col">
+        <button mat-stroked-button 
+                color="warn"
+                (click)="cambiarNombreConfiguracionEtiqueta()"
+                [disabled]="spinnerActualizar === 1">
+                <mat-icon *ngIf="spinnerActualizar === 1">
+                  <mat-spinner  color="primary" diameter="20">
+                  </mat-spinner>
+                </mat-icon>
+                <span *ngIf="spinnerActualizar === 0">
+                    Actualizar nombre
+                </span> 
+        </button>
+      </div>
+    </div>
+    <table mat-table [dataSource]="dataSource.configuracion" class="">
+        <ng-container matColumnDef="cod_evento">
+          <th mat-header-cell *matHeaderCellDef> Evento </th>
+          <td mat-cell *matCellDef="let element"> {{element.cod_evento}} </td>
+        </ng-container>
+      
+        <!-- cantidad  {{element.etiqueta}} -->
+        <ng-container matColumnDef="etiqueta">
+          <th mat-header-cell *matHeaderCellDef> Etiqueta </th>
+          <td mat-cell *matCellDef="let element"> 
+            <mat-form-field floatLabel="never">
+              <mat-label>Etiqueta</mat-label>
+              <mat-select [(ngModel)]="element.id_etiqueta" 
+                          (selectionChange)="cambiarEtiquetaConfig(element)">
+                <mat-option *ngFor="let etiqueta of etiquetas" [value]="etiqueta.id_etiqueta" >
+                  {{etiqueta.nombre}} | <mat-icon [ngStyle]="{'color': etiqueta.color_icono }">{{ etiqueta.descripcion_icono }}</mat-icon>
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="id">
+          <th mat-header-cell *matHeaderCellDef> Gestión </th>
+          <td mat-cell *matCellDef="let element" class="text-center">
+              <a href="javascript: void(0)" (click)="eliminarEtiquetaConfiguracion(element)" style="color:red">Eliminar</a> 
+          </td>
+      </ng-container>
+      
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+    <br>
+    <div class="row">
+      <div class="col">
+          <mat-form-field>
+            <mat-label>Codigo</mat-label>
+            <mat-select (selectionChange)="selectCodigo($event.value)">
+              <mat-option *ngFor="let codigo of codigos" [value]="codigo" >
+                {{ codigo.cod }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        
+      </div>
+      <div class="col">
+          <mat-form-field>
+            <mat-label>Etiqueta</mat-label>
+            <mat-select (selectionChange)="selectEtiqueta($event.value)">
+              <mat-option *ngFor="let etiqueta of etiquetas" [value]="etiqueta" >
+                {{etiqueta.nombre}} | <mat-icon [ngStyle]="{'color': etiqueta.color_icono }">{{ etiqueta.descripcion_icono }}</mat-icon>
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+      </div>
+      <div class="col">
+          <button mat-raised-button 
+                  (click)="agregarItemConfiguracion()" 
+                  [disabled]="isDisabled"
+                  matTooltip="Agregar evento a la configuración"> 
+                  <mat-icon>add</mat-icon>
+
+          </button>
+      </div>
+    </div>
+</div>
+<div mat-dialog-actions class="d-flex justify-content-end">
+    <button mat-button (click)="onDismiss()">Cerrar</button>
+</div>

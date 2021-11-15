@@ -1,0 +1,190 @@
+<div mat-dialog-content>
+    <!--spinner-->
+    <div class="loading-shade" *ngIf="loaderVehiculos" style="position: initial !important;">
+        <mat-spinner color="warn"></mat-spinner>
+    </div>
+    <!--/spinner-->
+    
+    <div class="container-fluid" *ngIf="loaderVehiculos === false">
+        <div class="row">
+            <div class="col">
+                <mat-list role="list">
+                    <mat-list-item role="listitem" style="height: 35px !important" class="no-padding-list">
+                        <mat-icon mat-list-icon class="color-warn">directions_car</mat-icon>
+                        <span class="flex-right"></span>
+                        <div class="float-end color-warn"> {{ localStorageService.lenguaje.lan294 }} </div>
+                    </mat-list-item>
+                </mat-list>
+            </div>
+        </div>
+        <table class="table table-striped table-bordered table-sm" style="font-size: 14px !important;">
+            <tbody>
+                <tr>
+                    <td>ID</td>
+                    <td>{{ infoVehiculo.id_vehiculo }}</td>
+                </tr>
+                <tr>
+                    <td>{{ localStorageService.lenguaje.lan042 }}</td>
+                    <td>{{ infoVehiculo.nombre }}</td>
+                </tr>
+                <tr>
+                    <td>{{ localStorageService.lenguaje.lan193 }}</td>
+                    <td>{{ infoVehiculo.placa }}</td>
+                </tr>
+                <tr>
+                    <td>{{ localStorageService.lenguaje.lan188 }}</td>
+                    <td>{{ infoVehiculo.marca }}</td>
+                </tr>
+                <tr>
+                    <td>{{ localStorageService.lenguaje.lan192 }}</td>
+                    <td>{{ infoVehiculo.modelo }}</td>
+                </tr>
+                <tr>
+                    <td>{{ localStorageService.lenguaje.lan194 }}</td>
+                    <td>{{ infoVehiculo.color }}</td>
+                </tr>
+                <tr>
+                    <td>{{ localStorageService.lenguaje.lan195 }}</td>
+                    <td>{{ infoVehiculo.vin }}</td>
+                </tr>
+                <tr>
+                    <td>{{ localStorageService.lenguaje.lan191 }}</td>
+                    <td>{{ infoVehiculo.year_vehicle }}</td>
+                </tr>
+                <tr>
+                    <td>{{ localStorageService.lenguaje.lan196 }}</td>
+                    <td>{{ infoVehiculo.descripcion }}</td>
+                </tr>
+            </tbody>
+        </table>
+        <!----------------------------------------------------------------------------------------------------------->
+        <div class="row">
+            <div class="col">
+                <mat-list role="list">
+                    <mat-list-item role="listitem" style="height: 35px !important" class="no-padding-list">
+                        <mat-icon mat-list-icon class="color-warn">groups</mat-icon>
+                        <span class="flex-right"></span>
+                        <div class="float-end color-warn">{{ localStorageService.lenguaje.lan295 }}</div>
+                    </mat-list-item>
+                </mat-list>
+            </div>
+        </div>
+        <table class="table table-striped table-bordered table-sm" style="font-size: 14px !important;">
+            <tbody>
+                <tr>
+                    <td>{{ localStorageService.lenguaje.lan296 }}</td>
+                    <td>{{ dispositivo.id_grupo }}</td>
+                </tr>
+                <tr>
+                    <td>{{ localStorageService.lenguaje.lan155 }}</td>
+                    <td>{{ dispositivo.nombre_grupo }}</td>
+                </tr>
+                <tr>
+                    <td>{{ localStorageService.lenguaje.lan297 }}</td>
+                    <td>{{ dispositivo.id_conductor }}</td>
+                </tr>
+                <tr>
+                    <td>{{ localStorageService.lenguaje.lan019 }}</td>
+                    <td>{{ dispositivo.nombre_conductor }}</td>
+                </tr>
+            </tbody>
+        </table>
+        <!----------------------------------------------------------------------------------------------------------->
+        <div class="row" *ngIf="localStorageService.usuario.usuario.root === 1">
+            <div class="col">
+                <mat-list role="list">
+                    <mat-list-item role="listitem" style="height: 35px !important" class="no-padding-list">
+                        <mat-icon mat-list-icon class="color-warn">settings_remote</mat-icon>
+                        <span class="flex-right"></span>
+                        <div class="float-end color-warn">{{ localStorageService.lenguaje.lan298 }}</div>
+                    </mat-list-item>
+                </mat-list>
+            </div>
+        </div>
+        <table class="table table-striped table-bordered table-sm" style="font-size: 14px !important;" *ngIf="localStorageService.usuario.usuario.root === 1">
+            <tbody>
+                <tr>
+                    <td>{{ localStorageService.lenguaje.lan041 }}</td>
+                    <td>{{ dispositivo.id_dispositivo }}</td>
+                </tr>
+                <tr>
+                    <td>{{ localStorageService.lenguaje.lan181 }}</td>
+                    <td>{{ dispositivo.imei }}</td>
+                </tr>
+                <tr>
+                    <td>{{ localStorageService.lenguaje.lan060 }}</td>
+                    <td>
+                        <span *ngIf="cString(dispositivo.online) == 'true'" style="color: green;"> Conectado</span>
+                        <span *ngIf="cString(dispositivo.online) == 'false'" style="color: red;"> Desconectado</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td>{{ localStorageService.lenguaje.lan299 }}</td>
+                    <td>
+                        <span *ngIf="dispositivo.fuente === '46'" style="color: green;"> Conectado</span>
+                        <span *ngIf="dispositivo.fuente === '45'" style="color: red;"> Desconectado</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td>{{ localStorageService.lenguaje.lan300 }}</td>
+                    <td>{{ dispositivo.ult_event_time | convertUtcToLocalTime}}</td>
+                </tr>
+                <tr>
+                    <td>{{ localStorageService.lenguaje.lan301 }}</td>
+                    <td>{{ dispositivo.ult_lat }}, {{ dispositivo.ult_lng }}</td>
+                </tr>
+                <tr>
+                    <td>{{ localStorageService.lenguaje.lan302 }}</td>
+                    <td>{{ dispositivo.ult_SC }}</td>
+                </tr>
+                <tr>
+                    <td>{{ localStorageService.lenguaje.lan303 }}</td>
+                    <td>{{ dispositivo.fecha_creacion | convertUtcToLocalTime }}</td>
+                </tr>
+                <tr>
+                    <td>Firmware</td>
+                    <td>{{ dispositivo.fw }}</td>
+                </tr>
+                <tr>
+                    <td>Interface</td>
+                    <td>{{ dispositivo.interface }}</td>
+                </tr>
+                <tr>
+                    <td>{{ localStorageService.lenguaje.lan304 }}</td>
+                    <td>{{ dispositivo.operator }}</td>
+                </tr>
+                <tr>
+                    <td>{{ localStorageService.lenguaje.lan141 }}</td>
+                    <td>{{ dispositivo.modelo }}</td>
+                </tr>
+                <tr>
+                    <td>IMSI</td>
+                    <td>{{ dispositivo.imsi }}</td>
+                </tr>
+                <tr>
+                    <td>{{ localStorageService.lenguaje.lan305 }}</td>
+                    <td>{{ dispositivo.platform }}</td>
+                </tr>
+                <tr>
+                    <td>SIM ID</td>
+                    <td>{{ dispositivo.sim_id }}</td>
+                </tr>
+                <tr>
+                    <td> {{ localStorageService.lenguaje.lan082 }} </td>
+                    <td>{{ dispositivo.configuracion }}</td>
+                </tr>
+                <tr>
+                    <td> ID Script </td>
+                    <td>{{ dispositivo.id_comando_equipo }}</td>
+                </tr>
+                <tr>
+                    <td> {{ localStorageService.lenguaje.lan144 }} </td>
+                    <td>{{ dispositivo.nombre_script }}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+<div mat-dialog-actions class="d-flex justify-content-end">
+    <button mat-button [mat-dialog-close]="true" cdkFocusInitial>{{ localStorageService.lenguaje.lan306 }}</button>
+</div>

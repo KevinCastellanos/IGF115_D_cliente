@@ -1,0 +1,22 @@
+.example-viewport {
+    height: 100% !important;
+    width: 100% !important;
+}
+  
+.example-item {
+    height: 50px;
+}
+
+.p-r-c21 {
+    padding-top: 0px !important; 
+}
+
+/*Extra small devices (portrait phones, less than 576px)*/
+@media (max-width: 575.98px) {
+    .p-r-c21 {
+        padding-top: 0px !important; 
+        margin-left: 0% !important; 
+        margin-left: 0% !important;
+    }
+}
+

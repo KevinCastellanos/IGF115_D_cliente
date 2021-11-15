@@ -1,0 +1,56 @@
+<div mat-dialog-content style="padding-left: 0px;padding-right: 0px;margin-left: -22px !important;margin-right: -22px !important; margin-top: -23px !important;text-align: center;">
+    
+    <div class="row" style="margin-left: 0px;margin-right: 0px; text-align: left !important; background: #ff450040;">
+        
+        <div class="col" style="font-size: 13px;white-space:nowrap;overflow:hidden;text-overflow: ellipsis;">
+            dirección: <strong>{{ data.evento.address }}</strong>
+        </div>
+    </div>
+    <div class="row" style="margin-left: 0px;margin-right: 0px; text-align:left !important; background: #ff450040;">
+        <div class="col" style="font-size: 13px;">
+            Hora: <strong>{{ data.evento.event_time | convertUtcToLocalTime }}</strong>
+        </div>
+        <div class="col" style="font-size: 13px;">
+            Posición: <strong>{{ data.evento.lat }},{{ data.evento.lng }}</strong>
+        </div>
+    </div>
+    <mat-divider></mat-divider>
+    <div class="row" style="margin-left: 0px;margin-right: 0px; text-align: left !important;">
+        <div class="col" style="font-size: 13px;" *ngIf="data.evento.PS01">
+            <span class="text-muted">ID Camara 1:</span> <strong>{{ data.evento.PS01 }}</strong>
+        </div>
+        <div class="col" style="font-size: 13px;" *ngIf="data.evento.ps01">
+            <span class="text-muted">ID Camara 1:</span> <strong>{{ data.evento.ps01 }}</strong>
+        </div>
+    </div>
+    <img [src]="image1" style="height: 421px;margin-bottom: 1px">
+    <br>
+    <div class="row" style="margin-left: 0px;margin-right: 0px; text-align: left !important;">
+        <div class="col" style="font-size: 13px;" *ngIf="data.evento.PS02">
+            <span class="text-muted">ID Camara 2:</span> <strong>{{ data.evento.PS02 }}</strong>
+        </div>
+        <div class="col" style="font-size: 13px;" *ngIf="data.evento.ps02">
+            <span class="text-muted">ID Camara 2:</span> <strong>{{ data.evento.ps02 }}</strong>
+        </div>
+    </div>
+    <img [src]="image2" style="height: 421px;">
+    <br>
+    <div class="row" style="margin-left: 0px;margin-right: 0px; text-align: left !important;">
+        <div class="col" style="font-size: 13px;" *ngIf="data.evento.PS03">
+            <span class="text-muted">ID Camara 3:</span> <strong>{{ data.evento.PS03 }}</strong>
+        </div>
+        <div class="col" style="font-size: 13px;" *ngIf="data.evento.ps02">
+            <span class="text-muted">ID Camara 3:</span> <strong>{{ data.evento.ps03 }}</strong>
+        </div>
+    </div>
+    <img [src]="image3" style="height: 421px;">
+
+</div>
+<div mat-dialog-actions class="d-flex justify-content-end" style="margin-left: -24px;margin-right: -24px;padding-bottom: 0px;">
+    <button mat-button 
+    [mat-dialog-close]="data.body" 
+    cdkFocusInitial class="w-full"
+    color="warn"
+    style="margin-bottom: -7px !important;">Cerrar</button>
+</div>
+

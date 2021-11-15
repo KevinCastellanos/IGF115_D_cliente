@@ -1,0 +1,8 @@
+<h5 mat-dialog-title>{{data.title}}</h5>
+<div mat-dialog-content>
+    {{data.body}}
+</div>
+<div mat-dialog-actions class="d-flex justify-content-end">
+    <button mat-button (click)="onDismiss()">{{ localStorageService.lenguaje.lan084 }}</button>
+    <button mat-raised-button color="warn" (click)="onConfirm()">{{ localStorageService.lenguaje.lan094 }}</button>
+</div>

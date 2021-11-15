@@ -1,0 +1,31 @@
+<h5 mat-dialog-title class="text-center">Notificacion: {{ data.etiqueta }}</h5>
+<div mat-dialog-content>
+    <p style="margin:0px">
+        El Equipo: <strong>{{ data.nombre }}</strong> generó el evento {{ data.cod_evento }}
+    </p>
+    <p style="margin: 0px;">
+        Fecha y hora: <strong> {{data.fecha | convertUtcToLocalTime}} </strong>
+    </p>
+    <p style="margin:0px">
+        Lugar
+    </p>
+    <div #mapView id="mapView" style="height: 200px; width: 100%;"></div>
+    <p style="margin: 0px;">
+        Agregar un comentario
+    </p>
+    <textarea   class="form-control" 
+                id="exampleFormControlTextarea1" 
+                rows="3"
+                name="comentario" 
+                [(ngModel)]="comentario"
+                id="comentario">
+    </textarea>
+    <br>
+</div>
+<div mat-dialog-actions class="d-flex justify-content-end">
+    <button mat-button (click)="onDismiss()">Cancelar</button>
+    <button mat-raised-button color="warn" (click)="atenderNotifcacion()">
+        Atendido
+    </button>
+</div>
+

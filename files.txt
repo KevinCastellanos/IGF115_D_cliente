@@ -1,0 +1,109 @@
+# servidor SSL
+server {
+    # Puerto de escucha
+    listen 443 ssl http2;
+    listen [::]:443 ssl http2;
+
+    # Nombre del servidor (nombre de dominio o subdominio)
+    server_name ec2-3-16-158-186.us-east-2.compute.amazonaws.com;
+
+    # SSL
+    ssl_certificate /etc/letsencrypt/live/ec2-3-16-158-186.us-east-2.compute.amazonaws.com/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/ec2-3-16-158-186.us-east-2.compute.amazonaws.com/privkey.pem;
+
+    # security
+    include nginxconfig.io/security.conf;
+    proxy_set_header Upgrade $http_upgrade;
+    proxy_set_header Connection "upgrade";
+
+    location ~* \.(eot|ttf|woff|woff2)$ {
+            add_header Access-Control-Allow-Origin *;   
+    }
+
+    ## Proyecto angular
+    location / {
+        root /var/www/html/dist;
+        index  index.html index.htm;
+        try_files $uri $uri/ /index.html;
+    }
+
+    # reverse proxy nodejs
+    location /api {
+        proxy_request_buffering off;
+        proxy_buffering off;
+        proxy_read_timeout 600s;
+        proxy_connect_timeout 500s;
+        rewrite /api/(.*) /$1  break;
+        proxy_pass http://127.0.0.1:5000/;
+        include nginxconfig.io/proxy.conf;
+    }
+
+    # reverse proxy nodejs auxilar
+    location /aux {
+        proxy_request_buffering off;
+        proxy_buffering off;
+        proxy_read_timeout 600s;
+        proxy_connect_timeout 500s;
+        rewrite /aux/(.*) /$1  break;
+        proxy_pass http://127.0.0.1:3551/;
+        include nginxconfig.io/proxy.conf;
+    }
+
+    # Socket.io
+    location /socket.io {
+        proxy_pass http://127.0.0.1:5000/socket.io/;
+        proxy_set_header  X-Real-IP $remote_addr;
+        proxy_set_header  X-Real-Port $remote_port;
+        include nginxconfig.io/proxy.conf;
+    }
+
+    # Gateway
+    location /gateway {
+        rewrite /gateway/(.*) /$1 break;
+        proxy_pass http://127.0.0.1:4913/;
+        include nginxconfig.io/proxy.conf;
+    }
+
+    # additional config
+    include nginxconfig.io/general.conf;
+
+    location /srv1 {
+                proxy_pass http://127.0.0.1:5000/socket.io/;
+                include nginxconfig.io/proxy.conf;
+        }
+
+    location /srv2 {
+                proxy_pass http://167.172.122.2:5000/socket.io/;
+                include nginxconfig.io/proxy.conf;
+        }
+}
+
+# subdomains redirect APS.TKONTROL.COM
+server {
+    # Puerto de escucha
+    listen 443 ssl http2;
+    listen [::]:443 ssl http2;
+
+    # Nombre del servidor
+    server_name aps.tkontrol.com;
+
+    # SSL
+    ssl_certificate /etc/letsencrypt/live/aps.tkontrol.com/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/aps.tkontrol.com/privkey.pem;
+
+    # redirecciona a https://aps.tkontrol.com
+    return 301 https://aps.tkontrol.com$request_uri;
+}
+
+# HTTP redirect
+server {
+    # Puerto de escucha
+    listen 80;
+    listen [::]:80;
+
+    # Nombre del servidor
+    server_name aps.tkontrol.com;
+
+    # Retorna a https://aps.tkontrol.com
+    return 301 https://aps.tkontrol.com$request_uri;
+}

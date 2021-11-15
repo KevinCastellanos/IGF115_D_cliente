@@ -1,0 +1,432 @@
+<div *ngIf="mapService.contenedorDetalleViajes == true" class="h-full">
+    <!--spinner-->
+    <div class="loading-shade" *ngIf="loaderVehiculos">
+        <!--mat-spinner color="warn"></mat-spinner-->
+        <div class="spinner">
+            <div class="inner one"></div>
+            <div class="inner two"></div>
+            <div class="inner three"></div>
+        </div>
+    </div>
+    <!--/spinner-->
+    <!--TOTALES DE VIAJES-->
+    <div *ngIf="viewViajes === true"  class="h-full">
+        <!--CABERCERA DE TOTALES DE VIAJE-->
+        <div class="card-header border-0 padding-0" style="height: 49px !important;"> 
+            <mat-list style="padding-top: 0px;">
+                <mat-divider></mat-divider>
+                <mat-list-item class="bg-default-warn">
+                    <button mat-icon-button
+                            (click)="atras()">
+                            <mat-icon>chevron_left</mat-icon>
+                    </button>
+                    {{ nombreVehiculo }}
+                    <span class="flex-right"></span>
+                    <button mat-icon-button
+                            [matTooltip]="localStorageService.lenguaje.lan126"
+                            (click)="detalleResumenViajes()">
+                        <mat-icon>filter_none</mat-icon>
+                    </button>
+                    <button mat-icon-button 
+                            [matTooltip]="localStorageService.lenguaje.lan127"
+                            aria-label="mat aria"
+                            (click)="seleccionarFechas('xx')">
+                        <mat-icon>calendar_today</mat-icon>
+                    </button>
+                </mat-list-item>
+            </mat-list>
+        </div>
+        <!--/CABERCERA DE TOTALES DE VIAJE-->
+        <!--CUERPO DE TOTALES DE VIAJE (forma 1)-->
+        <div class="card-body border-0 padding-0" *ngIf="localStorageService.vistaViaje.op === 'pre'" style="height: calc(100% - 49px) !important;">
+            <!--viajes-->
+            <cdk-virtual-scroll-viewport itemSize="72" class="example-viewport">
+                <mat-nav-list>
+                    <mat-list-item  *cdkVirtualFor="let viaje of viajes; let i = index"
+                                    (click)="openGroup(viaje, i, viaje[0].color, false)"
+                                    [ngClass]="{'disabledItem': viaje.length === 1, 'selectedItem': i === itemSelect}"
+                                    style="border-left: 6px solid black;"
+                                    [ngStyle]="{'border-left': '6px solid ' + viaje[0].color}"
+                                    [routerLinkActive]="['is-active']">
+                        <div mat-line class="d-flex justify-content-between" *ngIf="viaje.length !== 1">
+                            <!--Numero de viaje-->
+                            <div style="margin-left:4px;font-size: 13px;" *ngIf="viaje[0].viaje === true">
+                                <!--tranform pipe distancia en metros-->
+                                <span style="margin-left:2px; font-size: 16px;"> 
+                                    #{{ viaje[0].num_viaje }} 
+                                </span>
+                                <span style="margin-left:15px;">
+                                    {{ ((viaje | esViaje)/1000) | number : '1.2-2' }} km
+                                </span>
+                            </div>
+                            <div *ngIf="viaje[0].ign_on === true" class="d-flex align-items-center">
+                                <mat-icon style="color:green">power_settings_new</mat-icon>
+                                <span style="font-size: 13px;margin-left:15px;">
+                                    {{ ((viaje | esViaje)/1000) | number : '1.2-2' }} km
+                                </span>
+                            </div>
+                            <div *ngIf="viaje[0].ign_off" class="d-flex align-items-center"> 
+                                <mat-icon style="color:red">power_settings_new</mat-icon>
+                                <span style="font-size: 13px;margin-left:15px;">
+                                    {{ ((viaje | esViaje)/1000) | number : '1.2-2' }} km
+                                </span>
+                            </div>
+                            <!--/numero de viaje-->
+                            <!-- Estados de viaje/reposo -->
+                            <!--tranform pipe distancia en metros-->
+                            <div *ngIf="viaje[0].viaje === true" 
+                                    style="font-size: 13px;"
+                                    class="d-flex align-items-center">
+                                <span>{{ viaje[viaje.length-1].hora_final | convertAmPm }}</span>
+                                <span> - {{ viaje[0].hora_inicio | convertAmPm }}</span>
+                            </div>
+                            <div *ngIf="viaje[0].ign_on === true"
+                                style="font-size: 13px;"
+                                class="d-flex align-items-center">
+                                <span>{{ viaje[viaje.length-1].hora_final | convertAmPm }}</span>
+                                <span> - {{ viaje[0].hora_inicio | convertAmPm }}</span>
+                            </div>
+                            <div *ngIf="viaje[0].ign_off"
+                                style="font-size: 13px;"
+                                class="d-flex align-items-center">
+                                <span>{{ viaje[viaje.length-1].hora_final | convertAmPm }}</span>
+                                <span> - {{ viaje[0].hora_inicio | convertAmPm }}</span>
+                            </div>
+
+                            <div *ngIf="viaje[0].viaje_unico === true"
+                                style="font-size: 13px;"
+                                class="d-flex align-items-center">
+                                <span>{{ viaje[viaje.length-1].hora_final | convertAmPm }}</span>
+                                <span> - {{ viaje[0].hora_inicio | convertAmPm }}</span>
+                            </div>
+                            <!-- /Estados de viaje/reposo -->
+                        </div>
+                        <p mat-line *ngIf="viaje.length !== 1" class="d-flex justify-content-between">
+                            <span>
+                                <i class="far fa-clock" style="margin-right:16px; margin-left: 6px"></i> 
+                                {{ viaje | diferenciaHora }}
+                            </span>
+                            <span>
+                                <span style="margin-left: 10px;"></span>
+                                <span class="text-secondary">{{ localStorageService.lenguaje.lan021 }}</span>: {{ viaje[0].desde}}
+                                <span style="margin-left: 5px;"></span>
+                                <span class="text-secondary">{{ localStorageService.lenguaje.lan022 }}</span>: {{ viaje[viaje.length-1].hasta}}
+                            </span>
+                        </p>
+                        <div mat-line *ngIf="viaje.length === 1">
+                            {{ viaje[0].event_time }}
+                        </div>
+                        <button mat-icon-button 
+                                [matTooltip]="localStorageService.lenguaje.lan098"
+                                (click)="mostrarDetalleViaje(viaje,i,viaje[0].num_viaje );openGroup(viaje, i, viaje[0].color, true)"
+                                color="warn">
+                            <mat-icon>navigate_next</mat-icon>
+                        </button>
+                        <mat-divider></mat-divider>
+                    </mat-list-item>
+                </mat-nav-list>
+            </cdk-virtual-scroll-viewport>
+            
+            <!--/viajes-->
+            <div *ngIf="boolEventoNoGenerado === true" class="d-flex justify-content-center">
+                <div style="margin-top: 50%;">
+                    <p class="text-center"><mat-icon>timeline</mat-icon></p>
+                    <p style="margin-bottom: 0px !important" class="text-center">{{ localStorageService.lenguaje.lan124 }}: {{ nombreVehiculo }}</p>
+                    <p class="text-center">{{ localStorageService.lenguaje.lan125 }}</p>
+                </div>
+            </div>
+        </div>
+        <!--/CUERPO DE TOTALES DE VIAJE-->
+        <!--CUERPO DE TOTALES DE VIAJE (forma 2)-->
+        <div class="card-body border-0 padding-0" *ngIf="localStorageService.vistaViaje.op === 'aum'" style="height: calc(100% - 49px) !important;">
+            <!--viajes totales-->
+            <cdk-virtual-scroll-viewport itemSize="183" class="example-viewport">
+                <mat-nav-list style="padding-top: 0px">
+                    <mat-list-item  *cdkVirtualFor="let viaje of viajes; let i = index"
+                                    (click)="openGroup(viaje, i, viaje[0].color, false)"
+                                    [ngClass]="{'disabledItem': viaje.length === 1, 'selectedItem': i === itemSelect}"
+                                    style="padding-left: 20px;"
+                                    class="hoverAB">
+                        <div style="width: 30px;
+                                    height: 100%;background: blue;
+                                    left: -20px;position: absolute;
+                                    color: white;
+                                    display: flex;
+                                    text-align: center !important;
+                                    align-items: center !important;"
+                                    [ngStyle]="{'background': viaje[0].color}"
+                                    class="flex-column bd-highlight ">
+                            
+                            <div style="margin-top: 75%;
+                                        background: black;
+                                        width: 24px;
+                                        border-radius: 100%;
+                                        margin-left: auto;
+                                        margin-right: auto;                     
+                                        text-align: center;"
+                                        class="puntoa"
+                                        [ngClass]="{'hoverABSelection': i === itemSelect}">
+                                        A
+                            </div>
+                            
+                            <div *ngIf="viaje[0].viaje === true" style="margin-top: 100% !important;
+                                                                        margin-bottom: 36%;
+                                                                        text-align: center">
+                                {{viaje[0].num_viaje}}
+                            </div>
+                            
+                            <div style="background: black;
+                                        width: 24px;
+                                        border-radius: 100%;
+                                        margin: auto;
+                                        text-align: center;"
+                                        class="puntoa"
+                                        [ngClass]="{'hoverABSelection': i === itemSelect}">
+                                B
+                            </div>
+                        </div>
+
+                        <div mat-line class="d-flex justify-content-between" *ngIf="viaje.length !== 1">
+                            <!--fecha-->
+                            <div *ngIf="viaje[0].viaje === true" 
+                                    style="font-size: 14px;">
+                                {{ viaje[viaje.length-1].hora_final | date : 'medium' }}
+                            </div>
+                            <!--/fecha-->
+                            
+                            <!-- Estados de viaje/reposo -->
+                            <!--tranform pipe distancia en metros-->
+                            <div *ngIf="viaje[0].ign_on === true"
+                                style="font-size: 14px;"
+                                class="d-flex align-items-center">
+                                {{ viaje[viaje.length-1].hora_final | date: 'medium' }}
+                            </div>
+                            <div *ngIf="viaje[0].ign_off"
+                                style="font-size: 14px;"
+                                class="d-flex align-items-center">
+                                {{ viaje[viaje.length-1].hora_final | date: 'medium' }}
+                            </div>
+
+                            <div *ngIf="viaje[0].viaje_unico === true"
+                                style="font-size: 14px;"
+                                class="d-flex align-items-center">
+                                {{ viaje[viaje.length-1].hora_final | date: 'medium' }}
+                            </div>
+                            <!-- /Estados de viaje/reposo -->
+                        </div>
+
+                        <p mat-line *ngIf="viaje.length !== 1" style="margin-bottom: 15px;" class="text-muted">
+                            Origen: {{ viaje[0].desde}}
+                        </p>
+                        
+                        <div mat-line *ngIf="viaje.length !== 1" class="d-flex justify-content-between" style="margin-bottom: 15px;">
+                            <div>
+                                <p style="margin-bottom: 0px;">
+                                    Duración: 
+                                    {{ viaje | diferenciaHora }}   
+                                </p>
+                                <p style="margin-bottom: 0px;">
+                                    Distancia: 
+                                    {{ ((viaje | esViaje)/1000) | number : '1.2-2' }} km
+                                </p>
+                            </div>
+                            <div style="margin-top: auto;margin-bottom: auto;">
+                                <div style="margin-left:4px;font-size: 14px;" *ngIf="banderaDibujado[i].index === i && banderaDibujado[i].dibujado === true">
+                                    <mat-icon>moving</mat-icon>
+                                </div>
+                                <div *ngIf="viaje[0].ign_on === true" class="d-flex align-items-center">
+                                    <mat-icon style="color:green">power_settings_new</mat-icon>
+                                    
+                                </div>
+                                <div *ngIf="viaje[0].ign_off" class="d-flex align-items-center"> 
+                                    <mat-icon style="color:red">power_settings_new</mat-icon>
+                                </div>
+                            </div> 
+                        </div>
+
+                        <div mat-line *ngIf="viaje.length === 1">
+                            {{ viaje[0].event_time }}
+                        </div>
+    
+                        <div mat-line class="d-flex justify-content-between" *ngIf="viaje.length !== 1">
+                            <!--fecha-->
+                            <div *ngIf="viaje[0].viaje === true" 
+                                    style="font-size: 14px;"
+                                    class="d-flex align-items-center">
+                                {{ viaje[0].hora_inicio | date : 'medium' }}
+                            </div>
+                            <!--/fecha-->
+                            <!-- Estados de viaje/reposo -->
+                            <!--tranform pipe distancia en metros-->
+                            <div *ngIf="viaje[0].ign_on === true"
+                                style="font-size: 14px;"
+                                class="d-flex align-items-center">
+                                {{ viaje[0].hora_inicio | date: 'medium' }}
+                            </div>
+
+                            <div *ngIf="viaje[0].ign_off"
+                                style="font-size: 14px;"
+                                class="d-flex align-items-center">
+                                {{ viaje[0].hora_inicio | date: 'medium' }}
+                            </div>
+
+                            <div *ngIf="viaje[0].viaje_unico === true"
+                                style="font-size: 14px;"
+                                class="d-flex align-items-center">
+                                {{ viaje[0].hora_inicio | date: 'medium' }}
+                            </div>
+                            <!-- /Estados de viaje/reposo -->
+                        </div>
+
+                        <p mat-line *ngIf="viaje.length !== 1" class="text-muted">
+                            Destino: {{ viaje[viaje.length-1].hasta}}
+                        </p>
+    
+                        <button mat-icon-button 
+                                [matTooltip]="localStorageService.lenguaje.lan098"
+                                (click)="mostrarDetalleViaje(viaje,i,viaje[0].num_viaje );openGroup(viaje, i, viaje[0].color, true)"
+                                color="warn">
+                            <mat-icon>navigate_next</mat-icon>
+                        </button>
+
+                        <mat-divider></mat-divider>
+                    </mat-list-item>
+                </mat-nav-list>
+            </cdk-virtual-scroll-viewport>
+            <!--/viajes totales-->
+            <div *ngIf="boolEventoNoGenerado === true" class="d-flex justify-content-center">
+                <div style="margin-top: 50%;">
+                    <p class="text-center"><mat-icon>timeline</mat-icon></p>
+                    <p style="margin-bottom: 0px !important" class="text-center">{{ localStorageService.lenguaje.lan124 }}: {{ nombreVehiculo }}</p>
+                    <p class="text-center">{{ localStorageService.lenguaje.lan125 }}</p>
+                </div>
+            </div>
+        </div>
+        <!--/CUERPO DE TOTALES DE VIAJE-->
+    </div>    
+    <!--/TOTALES DE VIAJES-->
+    <!--DETALLE DE UN VIAJE-->
+    <div *ngIf="viewDetalleViajes === true" class="h-full">
+        <!--cabecera detalle viajes-->
+        <div class="card-header border-0 padding-0" style="height: 49px !important;">
+            <mat-list style="padding-top: 0px;">
+                <mat-divider></mat-divider>
+                <mat-list-item class="bg-default-warn">
+                    <button mat-icon-button
+                            (click)="atrasTotalesViajes(); mapService.deleteCircleMarket()">
+                            <mat-icon>chevron_left</mat-icon>
+                    </button>
+                    <span *ngIf="numViaje !== 0">
+                        {{ localStorageService.lenguaje.lan132 }} #{{ numViaje }}
+                    </span>
+                    <span *ngIf="noEsViaje !== 0">
+                        {{ localStorageService.lenguaje.lan278 }}
+                    </span>
+                   
+                    <span class="flex-right"></span>
+                    {{ nombreVehiculo }}
+                    <span style="margin-right: 10px;"></span>
+                    <button mat-icon-button 
+                            [matTooltip]="localStorageService.lenguaje.lan098"
+                            (click)="detalleResumen(detalleViaje)">
+                        <mat-icon>filter_none</mat-icon>
+                    </button>
+                </mat-list-item>
+            </mat-list>
+        </div>
+        <!--/cabecera detalle viajes-->
+        <!--botones anterior-siguiente detalle viajes-->
+        <div class="card-header border-0 padding-0" style="height: 36px !important; overflow-x: hidden">
+            <div class="row">
+                <div class="col">
+                    <button mat-button color="warn" class="w-full" (click)="viajeAnterior()">
+                        <mat-icon>keyboard_arrow_left_rounded</mat-icon> Anterior
+                    </button>
+                </div>
+                <div class="col">
+                    <button mat-button color="warn" class="w-full" (click)="viajeSiguiente()">
+                        Siguiente <mat-icon>keyboard_arrow_right_rounded</mat-icon>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <!--/botones anterior-siguiente detalle viajes--->
+        <!--cuerpo detalle viaje-->
+        <div class="card-body border-0 padding-0" style="height: calc(100% - 87px) !important;">
+            <!--detalle viajes style="background:rgb(250, 250, 250);border-bottom:1px solid #cccbcb; padding-top:5px; padding-bottom:5px;font-size:12px;font-family: Roboto !important;"-->
+            <cdk-virtual-scroll-viewport itemSize="43" class="example-viewport" #idViewportDetalle>
+                <mat-list>
+                    <mat-list-item *cdkVirtualFor="let evento of detalleViaje;let ii=index" 
+                                    (click)="eventoDetalle(evento, ii);" 
+                                    class="mouse-hover"
+                                    [ngClass]="{'selectedItem': ii === itemSelectDetails}"
+                                    [ngStyle]="{'background': evento.background, 'color': evento.colorText, 'height': '43px'}"
+                                    (mouseenter)="seleccionHoverMarker(true, evento)" (mouseleave)="seleccionHoverMarker(false, evento)"
+                                    [id]="'element_'+ii">
+
+                        <div mat-line class="d-flex justify-content-between" style="font-size: 14px !important;margin-bottom: -5px;">
+                            <div> 
+                                
+                                <span style="margin-right: 5px; color: #0000002e">{{ evento.evento }}</span>
+                                <span style="font-weight: 500;">
+                                    {{ evento.etiqueta }}
+                                </span>                             
+                                
+                            </div> 
+                            <div>
+                                <!--Enviamos de parametro la hora utc y devuelve hora local y convertido a formato-->
+                                <!-- AM PM -->
+                                <span style="font-weight: 300;">{{ evento.event_time | convertAmPm }}</span>
+                            </div>
+                            <div *ngIf="evento.PS00">
+                                <a  href="javascript:void(0)" 
+                                    (click)="verFoto(evento)"
+                                    matTooltip="Ver foto capturada">
+                                    <mat-icon>photo_camera</mat-icon>
+                                </a>
+                            </div>
+                            <div *ngIf="evento.PS01 !== '0'">
+                                <a  href="javascript:void(0)" 
+                                    (click)="verFotoDobleCamara(evento)"
+                                    matTooltip="Ver fotos capturadas">
+                                    <mat-icon>photo_camera</mat-icon>
+                                </a>
+                            </div>
+                            <div *ngIf="evento.icono == 1">
+                                <mat-icon
+                                [matTooltip]="evento.nombre_icono"
+                                [ngStyle]="{'color': evento.color_icono }">{{ evento.descripcion_icono }}</mat-icon>
+                            </div>
+                            <div *ngIf="evento.posicion_valida === 0">
+                                <mat-icon style="color: red;"
+                                matTooltip="Vehículo ha perdido posición">gps_off</mat-icon>
+                            </div> 
+                        </div>
+                        <p  mat-line 
+                            class="d-flex justify-content-between" 
+                            style="font-size: 12px !important;"
+                            [ngStyle]="{'color':evento.evento === '02' ? 'white' : 'null' }">
+                            <span class="truncar-direccion" [matTooltip]="evento.address">
+                                {{ evento.address }}
+                            </span>
+                            <span style="font-weight: bold;">
+                                {{ evento.vel | convertMiAKm }} km/h
+                            </span> 
+                        </p>
+                        <mat-divider></mat-divider>
+                    </mat-list-item>
+                </mat-list>
+            </cdk-virtual-scroll-viewport>
+            <!--/detalle viajes-->
+        </div>
+        <!--/cuerpo detalle viaje-->
+        <button  mat-fab 
+            color="warn"
+            class="position-absolute p-rb z-index-1000"
+            (click)="compService.toggle()"
+            *ngIf="streetView === true"
+            ><mat-icon>map</mat-icon>
+        </button>
+    </div>
+    <!--/DETALLE DE UN VIAJE-->
+</div>

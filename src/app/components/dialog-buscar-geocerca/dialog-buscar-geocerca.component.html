@@ -1,0 +1,24 @@
+
+<h5 mat-dialog-title>Geocercas</h5>
+<mat-dialog-content class="mat-typography">
+    <mat-form-field class="w-full"          
+                    floatLabel="never">
+        <mat-icon matSuffix>search</mat-icon>
+        <mat-label>Buscar</mat-label>
+        <input matInput type="search"
+                [(ngModel)]="searchText">
+    </mat-form-field>
+
+    <cdk-virtual-scroll-viewport itemSize="48" style="height: 200px !important;">
+        <mat-list role="list">
+            <mat-list-item role="listitem" *cdkVirtualFor="let geocerca of localStorageService.geocercas | filterGeocerca : searchText">
+                <mat-radio-button color="warn" (change)="radioChange(geocerca)">
+                    {{ geocerca.nombre_geocerca }}
+                </mat-radio-button>
+            </mat-list-item>
+        </mat-list>
+    </cdk-virtual-scroll-viewport>
+</mat-dialog-content>
+<mat-dialog-actions>
+    
+</mat-dialog-actions>

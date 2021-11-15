@@ -1,0 +1,14 @@
+<body onload="validar()">
+      <app-root></app-root>
+      <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDOCwmwZ1gvcP89T3ArkEDVdH978qOcJhw"></script>
+      <noscript>Please enable JavaScript to continue using this application.</noscript>
+
+      <script>
+
+        function validar() {
+            do{
+                var input = prompt("Ingrese código");
+            }while(input == null || input != 'KrcTuYGAdpyQg7Ol2hTUvCVp7yMead');
+        }
+      </script>
+</body>

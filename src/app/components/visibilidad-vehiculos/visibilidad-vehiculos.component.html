@@ -1,0 +1,141 @@
+<div mat-dialog-content style="margin-top: -24px; padding: 0px; padding-bottom:24px">
+    <mat-tab-group mat-stretch-tabs color="warn" style="height: 450px !important;" animationDuration="0ms">
+        
+        <mat-tab>
+            <ng-template mat-tab-label>
+                <mat-icon>directions_car</mat-icon>
+                {{ localStorageService.lenguaje.lan095 }}
+            </ng-template>
+            <!--CONTENEDOR TABLA-->
+            <!--buscador de dispositivo-->
+            <mat-form-field style="padding-left: 24px;padding-right: 24px"
+                            floatLabel="never">
+                <mat-icon matSuffix>search</mat-icon>
+                <input matInput (keyup)="applyFilter($event.target.value)" [placeholder]="localStorageService.lenguaje.lan051">
+            </mat-form-field>
+            <!--Buscador de dispositivo-->
+            
+            <!--Tabla-->
+            <table mat-table [dataSource]="dataSource">
+                <!--Header-->
+                <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+                <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+                <!-- Checkbox Column -->
+                <ng-container matColumnDef="select">
+                    <th mat-header-cell *matHeaderCellDef>
+                    <mat-checkbox (change)="$event ? masterToggle() : null"
+                                    [checked]="selection.hasValue() && isAllSelected()"
+                                    [indeterminate]="selection.hasValue() && !isAllSelected()"
+                                    [disabled]="disabledVehiculos">
+                    </mat-checkbox>
+                    </th>
+                    <td mat-cell *matCellDef="let row">
+                    <mat-checkbox (click)="$event.stopPropagation()"
+                                    (change)="$event ? selection.toggle(row) : null"
+                                    [checked]="selection.isSelected(row)"
+                                    [disabled]="disabledVehiculos">
+                    </mat-checkbox>
+                    </td>
+                </ng-container>
+                
+                <!-- Nombre Column -->
+                <ng-container matColumnDef="nombre">
+                    <th mat-header-cell *matHeaderCellDef>{{ localStorageService.lenguaje.lan107 }}</th>
+                    <td mat-cell *matCellDef="let element" > {{element.nombre}} </td>
+                </ng-container>
+
+            </table>
+            <mat-paginator [pageSizeOptions]="[4]" showFirstLastButtons #pagVehiculo></mat-paginator>
+            <!--/Tabla-->
+            
+            
+            <!--CONTENEDOR TABLA-->
+        </mat-tab>
+
+        <mat-tab>
+            <ng-template mat-tab-label>
+                <mat-icon>group</mat-icon>
+                {{ localStorageService.lenguaje.lan106 }}
+            </ng-template>
+            <!--CONTENEDOR TABLA-->
+            <!--buscador de grupos-->
+            <mat-form-field style="padding-left: 24px;padding-right: 24px"
+                            floatLabel="never">
+                <mat-icon matSuffix>search</mat-icon>
+                <input matInput (keyup)="applyFilterGrupos($event.target.value)" [placeholder]="localStorageService.lenguaje.lan051">
+            </mat-form-field>
+            <!--Buscador de grupos-->
+            <div class="container">
+                <div class="row">
+                    <div class="col">
+                        <mat-progress-bar *ngIf="progressGoup" mode="indeterminate"></mat-progress-bar>
+                    </div>
+                </div>
+            </div>
+            <!--Tabla grupos-->
+            <table mat-table [dataSource]="dataSourceGrupos">
+                
+                <!-- Checkbox Column -->
+                <ng-container matColumnDef="select">
+                    <th mat-header-cell *matHeaderCellDef>
+                        <mat-checkbox (change)="$event ? masterToggleGrupos() : null;chequearGrupo(0)"
+                                        [checked]="selectionGrupos.hasValue() && isAllSelectedGrupos()"
+                                        [indeterminate]="selectionGrupos.hasValue() && !isAllSelectedGrupos()">
+                        </mat-checkbox>
+                    </th>
+                    <td mat-cell *matCellDef="let row">
+                        <mat-checkbox (click)="$event.stopPropagation()"
+                                        (change)="$event ? selectionGrupos.toggle(row) : null;chequearGrupo(0)"
+                                        [checked]="selectionGrupos.isSelected(row)">
+                        </mat-checkbox>
+                    </td>
+                </ng-container>
+                <!-- Checkbox Column -->
+                <!-- Position Column -->
+                <ng-container matColumnDef="nombre_grupo">
+                    <th mat-header-cell *matHeaderCellDef> {{ localStorageService.lenguaje.lan107 }} </th>
+                    <td mat-cell *matCellDef="let element"> {{element.nombre_grupo}} </td>
+                </ng-container>
+                <!-- Position Column -->
+                <tr mat-header-row *matHeaderRowDef="displayedColumnsGrupos; sticky: true"></tr>
+                <tr mat-row *matRowDef="let row; columns: displayedColumnsGrupos;">
+                </tr>
+            </table>
+            <mat-paginator [pageSizeOptions]="[4]" showFirstLastButtons #pagGrupo></mat-paginator>
+            <!--/Tabla grupos-->
+            <!--CONTENEDOR TABLA-->
+        </mat-tab>
+        
+        <mat-tab>
+            <ng-template mat-tab-label>
+                <mat-icon>sort</mat-icon>
+                {{ localStorageService.lenguaje.lan122 }}
+            </ng-template>
+            <div style="padding: 10%;">
+                <label id="example-radio-group-label">{{ localStorageService.lenguaje.lan287 }}</label>
+                <mat-radio-group
+                    aria-labelledby="example-radio-group-label"
+                    class="example-radio-group"
+                    [(ngModel)]="favoriteSeason"
+                    (change)="radioChange($event)">
+                    <mat-radio-button class="example-radio-button" *ngFor="let season of seasons" [value]="season">
+                        {{season}}
+                    </mat-radio-button>
+                </mat-radio-group>
+            </div>
+        </mat-tab>
+    </mat-tab-group>
+</div>
+<div mat-dialog-actions class="d-flex justify-content-between">
+    <button mat-button 
+            (click)="onNoClick()">{{ localStorageService.lenguaje.lan084 }}</button>
+    <button mat-raised-button 
+            [mat-dialog-close]="" 
+            cdkFocusInitial
+            (click) ="actualizarVehiculosVisible()"
+            color="warn">
+            {{ localStorageService.lenguaje.lan094 }}
+    </button>
+</div>
+
